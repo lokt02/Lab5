@@ -4,6 +4,7 @@
 #include "gtest/gtest.h"
 #include "../Set.h"
 #include "../Person.h"
+#include "../SequenceSorter.h"
 #include <string>
 
 using namespace std;
@@ -126,4 +127,12 @@ TEST(SetTest, EqualTest){
     Set<int> set = Set<int>({1, 2, 3, 4, 5});
     Set<int> set1 = Set<int>(set);
     ASSERT_TRUE(set1 == set);
+}
+
+TEST(SetTest, ToArray){
+    Set<int> set = Set<int>({1, 2, 3, 4, 5});
+    auto arr = ArraySequence<int>({1, 2, 3, 4, 5});
+    auto arr1 = set.ToArray();
+    SequenceSorter<int>::QuickSort(&arr1);
+    ASSERT_TRUE(arr1 == arr);
 }

@@ -246,6 +246,14 @@ protected:
             }
         }
     }
+
+    void GetPath(Node* node, ArraySequence<T> *array){
+        if(node){
+            array->Append(node->key);
+            if(node->left) GetPath(node->left, array);
+            if(node->right) GetPath(node->right, array);
+        }
+    }
 public:
     Set() = default;
     Set(initializer_list<T> items){
@@ -303,6 +311,12 @@ public:
 
     Set<T> Substraction(Set<T> set){
         return SubstractionPath(set.root, this->root, *this);
+    }
+
+    ArraySequence<T> ToArray(){
+        ArraySequence<T> res = ArraySequence<T>();
+        GetPath(this->root, &res);
+        return res;
     }
 
     bool IsEqual(Set<T> set){
