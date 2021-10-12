@@ -285,6 +285,30 @@ public:
         return false;
     }
 
+    T& GetValue(T key){
+        if(&key == nullptr || !root){
+            throw std::range_error("You cant search NULL");
+        }
+        Node** current = &root;
+        while (*current){
+            Node& node = **current;
+            if(key < node.key){
+                current = &node.left;
+            }
+            else{
+                if(key > node.key){
+                    current = &node.right;
+                }
+                else{
+                    if((*current)->key == key)
+                        return (*current)->key;
+                }
+            }
+        }
+        throw std::range_error("This key does not exists in tree");
+        // return nullptr;
+    }
+
     Node* SearchNode(T key){
         Node** current = &root;
         while (*current){
