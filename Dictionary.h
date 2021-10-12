@@ -55,6 +55,10 @@ public:
     }
 
     void Add(TKey key, TValue value){
+        auto array = items.ToArray();
+        for(int i = 0; i < array.GetLength(); i++){
+            if(array.Get(i).key == key) throw std::range_error("This KEY already exists!");
+        }
         items.Add(Pair(key, value));
     }
 
@@ -68,16 +72,23 @@ public:
 
     TValue &Get(TKey key){
         auto array = items.ToArray();
+        TValue* value;
         for(int i = 0; i < array.GetLength(); i++){
-            if(array.Get(i).key == key) return array.Get(i).value;
+            if(array.Get(i).key == key) *value = array.Get(i).value;
         }
-        throw std::range_error("This KEY does not exists!");
+        if(items.GetValue(Pair(key, *value)))
+            return items.GetValue(Pair(key, *value))->value;
+        else
+            return *value;
+            // throw std::range_error("This KEY does not exists!");
+        // throw std::range_error("This KEY does not exists!");
     }
 
     TValue& operator[](TKey key){
-        TValue value = Get(key);
+        // TValue value = Get(key);
         // auto pair = Pair(key, value);
-        return items.GetValue(Pair(key, value)).value;
+        // return items.GetValue(Pair(key, value)).value;
+        return Get(key);
     }
 
     bool operator==(Dictionary<TKey, TValue> dictionary){

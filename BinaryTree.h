@@ -285,7 +285,7 @@ public:
         return false;
     }
 
-    T& GetValue(T key){
+    T* GetValue(T key){
         if(&key == nullptr || !root){
             throw std::range_error("You cant search NULL");
         }
@@ -301,12 +301,12 @@ public:
                 }
                 else{
                     if((*current)->key == key)
-                        return (*current)->key;
+                        return &((*current)->key);
                 }
             }
         }
-        throw std::range_error("This key does not exists in tree");
-        // return nullptr;
+        // throw std::range_error("This key does not exists in tree");
+        return nullptr;
     }
 
     Node* SearchNode(T key){

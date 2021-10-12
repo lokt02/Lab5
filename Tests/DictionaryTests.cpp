@@ -23,6 +23,8 @@ TEST(Dictionary_Test, Add){
     dict1.Add("a", 1);
     dict.Add("b", 2);
     EXPECT_TRUE(dict == dict1);
+
+    EXPECT_ANY_THROW(dict.Add("b", 3));
 }
 
 TEST(Dictionary_Test, Remove){
