@@ -60,7 +60,10 @@ public:
 
     void Remove(TKey key){
         TValue value = Get(key);
-        items.Delete(Pair(key, value));
+        Set<Pair> set = Set<Pair>();
+        set.Add(Pair(key, value));
+        items.Substraction(set);
+        //items.Delete(Pair(key, value));
     }
 
     TValue &Get(TKey key){
