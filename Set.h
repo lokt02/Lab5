@@ -7,13 +7,14 @@
 
 #include "BinaryTree.h"
 #include "ArraySequence.h"
+#include "ISet.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
 template<class T>
-class Set: public Tree<T>{
+class Set: public Tree<T>, public ISet<T>{
 protected:
     using Node = typename Tree<T>::Node;
     void UnionPath(Node* node, Set<T> *set){
@@ -24,10 +25,10 @@ protected:
         }
     }
 
-    Set<T> IntersectionPath(Node *root1, Node *root2)
+    Set<T> *IntersectionPath(Node *root1, Node *root2)
     {
         // Create two stacks for two inorder traversals
-        Set<T> result = Set<T>();
+        Set<T>* result = new Set<T>();
         ArraySequence<Node *> s1, s2;
 
         while (true)
@@ -55,7 +56,7 @@ protected:
                 // If current keys in two trees are same
                 if (root1->key == root2->key)
                 {
-                    result.Append(root1->key);
+                    result->Append(root1->key);
                     s1.PopLast();
                     s2.PopLast();
 
@@ -92,10 +93,10 @@ protected:
         return result;
     }
 
-    Set<T> SubstractionPath(Node *root1, Node *root2, Set<T> set)
+    Set<T> *SubstractionPath(Node *root1, Node *root2, Set<T> set)
     {
         // Create two stacks for two inorder traversals
-        Set<T> result = Set<T>(set);
+        Set<T>* result = new Set<T>(set);
         ArraySequence<Node *> s1, s2;
 
         while (true)
@@ -123,7 +124,7 @@ protected:
                 // If current keys in two trees are same
                 if (root1->key == root2->key)
                 {
-                    result.Delete(root1->key);
+                    result->Delete(root1->key);
                     s1.PopLast();
                     s2.PopLast();
 
@@ -299,17 +300,17 @@ public:
         return res;
     }
 
-    Set<T> Intersection(Set<T> set){
+    ISet<T>* Intersection(ISet<T> &set){
         return IntersectionPath(set.root, this->root);
     }
 
-    Set<T> Union(Set<T> set){
+    ISet<T>* Union(ISet<T> &set){
         Set<T> result = Set<T>(*this);
         UnionPath(set.root, &result);
-        return result;
+        return *result;
     }
 
-    Set<T> Substraction(Set<T> set){
+    ISet<T>* Substraction(ISet<T>& set){
         return SubstractionPath(set.root, this->root, *this);
     }
 
@@ -319,8 +320,8 @@ public:
         return res;
     }
 
-    bool IsEqual(Set<T> set){
-        return IsEqualNode(set.root, this->root);
+    bool IsEqual(const ISet<T> &set){
+        return IsEqualNode(((Set<T>&)set).root, this->root);
     }
 
     bool IsSubSet(Set<T> set){
