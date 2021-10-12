@@ -19,6 +19,9 @@ typedef struct PersonID{
     bool operator==(const PersonID &id) const {
         return series == id.series && number == id.number;
     }
+    bool operator!=(const PersonID &id) const {
+        return series != id.series || number != id.number;
+    }
 } PersonID;
 
 class Person{
@@ -94,6 +97,9 @@ public:
     }
     bool operator==(const Person& person) const{
         return GetFullName() == person.GetFullName() && GetID() == person.GetID() ;
+    }
+    bool operator!=(const Person& person) const{
+        return GetFullName() != person.GetFullName() || GetID() != person.GetID() ;
     }
 };
 

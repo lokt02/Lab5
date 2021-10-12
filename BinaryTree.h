@@ -22,7 +22,7 @@ protected:
         explicit Node(Node* node){
             if(node){
                key = node->key;
-                height = node->height;
+               height = node->height;
                left = new Node(*(node->left));
                right = new Node(*(node->right));
             }
@@ -158,6 +158,10 @@ public:
 
     Tree(const Tree &tree): Tree(){
         if(tree.root != nullptr) root = new Node(*tree.root);
+    }
+
+    explicit Tree(Tree<T>* tree): Tree(){
+        if(tree != nullptr && tree->root != nullptr) root = new Node(tree->root);
     }
 
     ~Tree(){

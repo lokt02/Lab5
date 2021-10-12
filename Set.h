@@ -7,6 +7,7 @@
 
 #include "BinaryTree.h"
 #include "ArraySequence.h"
+#include "SequenceSorter.h"
 #include "ISet.h"
 #include <iostream>
 #include <vector>
@@ -262,6 +263,9 @@ public:
             this->Append(item);
         }
     }
+    explicit Set(Set<T>* set): Tree<T>(set){
+
+    }
     Set(const Set& set): Tree<T>(set){
 
     }
@@ -301,44 +305,51 @@ public:
     }
 
     ISet<T>* Intersection(ISet<T> &set){
-        return IntersectionPath(set.root, this->root);
+        return IntersectionPath(((Set<T>&)set).root, this->root);
     }
 
     ISet<T>* Union(ISet<T> &set){
-        Set<T> result = Set<T>(*this);
-        UnionPath(set.root, &result);
-        return *result;
+        Set<T>* result = new Set<T>(*this);
+        UnionPath(((Set<T>&)set).root, result);
+        return result;
     }
 
     ISet<T>* Substraction(ISet<T>& set){
-        return SubstractionPath(set.root, this->root, *this);
+        return SubstractionPath(((Set<T>&)set).root, this->root, *this);
     }
 
     ArraySequence<T> ToArray(){
         ArraySequence<T> res = ArraySequence<T>();
         GetPath(this->root, &res);
+        SequenceSorter<T>::QuickSort(&res);
         return res;
     }
 
     bool IsEqual(const ISet<T> &set){
-        return IsEqualNode(((Set<T>&)set).root, this->root);
+        auto array = ((Set<T> *)(&set))->ToArray();
+        auto myArray = this->ToArray();
+        return myArray == array;
+        // return IsEqualNode(((Set<T>&)set).root, this->root);
     }
 
     bool IsSubSet(Set<T> set){
+        // auto array = set.ToArray();
+        // auto myArray = this->ToArray();
         return SubSetPath(set.root, this->root, set);
+        // return myArray.SubSequenceSearch(&array);
     }
 
     bool operator==(Set<T> set){
         return IsEqual(set);
     }
-    Set<T> operator&(Set<T> set){
-        return Intersection(set);
+    Set<T>* operator&(Set<T> set){
+        return (Set<T>*)Intersection(set);
     }
-    Set<T> operator|(Set<T> set){
-        return Union(set);
+    Set<T>* operator|(Set<T> set){
+        return (Set<T>*)Union(set);
     }
-    Set<T> operator-(Set<T> set){
-        return Substraction(set);
+    Set<T>* operator-(Set<T> set){
+        return (Set<T>*)Substraction(set);
     }
 
     void Display(){

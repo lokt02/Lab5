@@ -34,7 +34,7 @@ TEST(SetTest, Init){
     set.Add(4);
 
     Set<int> set1 = Set<int>({0, 1, 2, 3, 4});
-    ASSERT_TRUE(set.IsSubSet(set1));
+    ASSERT_TRUE(set.IsEqual(set1));
 }
 
 TEST(SetTest, Add_Delete){
@@ -105,22 +105,26 @@ TEST(SetTest, Reduce){
 TEST(SetTest, Inersection){
     Set<int> set = Set<int>({1, 2, 3, 4, 5});
     Set<int> set1 = Set<int>({4, 5, 6, 7, 8});
-    Set<int> intersection = set & set1;
-    ASSERT_TRUE(intersection.IsSubSet(Set<int>({4, 5})));
+    auto intersection = set & set1;
+    intersection->Display();
+    //Set<int> intersection = Set<int>(sets);
+    ASSERT_TRUE(intersection->IsEqual(Set<int>({4, 5})));
 }
 
 TEST(SetTest, Union){
     Set<int> set = Set<int>({1, 2, 3, 4, 5});
     Set<int> set1 = Set<int>({4, 5, 6, 7, 8});
-    Set<int> uni = set | set1;
-    ASSERT_TRUE(uni.IsSubSet(Set<int>({1, 2, 3, 4, 5, 6, 7, 8})));
+    //Set<int>* uni = set|set1;
+    Set<int> uni = Set<int>(set | set1);
+    auto sets = Set<int>({1, 2, 3, 4, 5, 6, 7, 8});
+    ASSERT_TRUE(uni.IsEqual(Set<int>({1, 2, 3, 4, 5, 6, 7, 8})));
 }
 
 TEST(SetTest, Substraction){
     Set<int> set = Set<int>({1, 2, 3, 4, 5});
     Set<int> set1 = Set<int>({4, 5, 6, 7, 8});
-    Set<int> sub = set - set1;
-    ASSERT_TRUE(sub.IsSubSet(Set<int>({1, 2, 3})));
+    Set<int> sub = Set<int>(set - set1);
+    ASSERT_TRUE(sub.IsEqual(Set<int>({1, 2, 3})));
 }
 
 TEST(SetTest, EqualTest){
