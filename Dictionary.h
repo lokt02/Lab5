@@ -48,10 +48,23 @@ protected:
     };
 private:
     Set<Pair> items;
-
+    size_t count;
 public:
     Dictionary(){
         items = Set<Pair>();
+        count = 0;
+    }
+
+    size_t GetCount() override{
+        return count;
+    }
+
+    bool ContainsKey(TKey key) override{
+        auto array = items.ToArray();
+        for(int i = 0; i < array.GetLength(); i++){
+            if(array.Get(i).key == key) return true;
+        }
+        return false;
     }
 
     void Add(TKey key, TValue value){
@@ -60,6 +73,7 @@ public:
             if(array.Get(i).key == key) throw std::range_error("This KEY already exists!");
         }
         items.Add(Pair(key, value));
+        count++;
     }
 
     void Remove(TKey key){
@@ -67,6 +81,7 @@ public:
         Set<Pair> set = Set<Pair>();
         set.Add(Pair(key, value));
         items.Substraction(set);
+        count--;
         //items.Delete(Pair(key, value));
     }
 
