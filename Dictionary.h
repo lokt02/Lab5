@@ -29,7 +29,7 @@ protected:
             return value > pair.value;
         }
         bool operator<(Pair pair){
-            return value < pair.value;
+            return value <= pair.value;
         }
         bool operator>=(Pair pair){
             return value >= pair.value;
@@ -87,14 +87,15 @@ public:
 
     TValue &Get(TKey key){
         auto array = items.ToArray();
-        TValue* value;
+        TValue value;
         for(int i = 0; i < array.GetLength(); i++){
-            if(array.Get(i).key == key) *value = array.Get(i).value;
+            if(array.Get(i).key == key) value = array.Get(i).value;
         }
-        if(items.GetValue(Pair(key, *value)))
-            return items.GetValue(Pair(key, *value))->value;
+        if(items.GetValue(Pair(key, value)))
+            return items.GetValue(Pair(key, value))->value;
         else
-            return *value;
+            throw std::runtime_error("This KEY does not exists!");
+            // return *value;
             // throw std::range_error("This KEY does not exists!");
         // throw std::range_error("This KEY does not exists!");
     }
