@@ -85,8 +85,6 @@ TEST(SetTest, Map){
 
     Set<int> set1 = Set<int>({1, 2, 3, 4, 5, 6});
     Set<int> set2 = set1.MapSet(MapTestLab);
-//    ASSERT_TRUE(set2.IsEqual(Set<int>({0, 1})));
-    set2.Display();
 }
 
 TEST(SetTest, Where){
@@ -112,9 +110,7 @@ TEST(SetTest, Inersection){
 TEST(SetTest, Union){
     Set<int> set = Set<int>({1, 2, 3, 4, 5});
     Set<int> set1 = Set<int>({4, 5, 6, 7, 8});
-    //Set<int>* uni = set|set1;
     Set<int> uni = Set<int>(set | set1);
-    uni.Display();
     auto sets = Set<int>({1, 2, 3, 4, 5, 6, 7, 8});
     ASSERT_TRUE(uni.IsEqual(Set<int>({1, 2, 3, 4, 5, 6, 7, 8})));
 }
