@@ -31,7 +31,7 @@ TEST(Dictionary_Test, Remove){
     Dictionary<string, int> dict = Dictionary<string, int>();
     dict.Add("a", 1);
     EXPECT_NO_THROW(dict.Remove("a"));
-    EXPECT_FALSE(dict == (Dictionary<string, int>()));
+    EXPECT_TRUE(dict == (Dictionary<string, int>()));
 }
 
 TEST(Dictionary_Test, Get_or_Set){
@@ -45,7 +45,6 @@ TEST(Dictionary_Test, Get_or_Set){
     EXPECT_TRUE(dict["c"] == 3);
     EXPECT_TRUE(dict["d"] == 4);
     dict["a"] = 10;
-    dict.Display();
     EXPECT_TRUE(dict["a"] == 10);
 }
 

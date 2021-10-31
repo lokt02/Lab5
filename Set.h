@@ -15,312 +15,125 @@
 using namespace std;
 
 template<class T>
-class Set: public Tree<T>, public ISet<T>{
+class Set: public ISet<T>{
+private:
+    Tree<T> tree;
 protected:
-    using Node = typename Tree<T>::Node;
-    void UnionPath(Node* node, Set<T> *set){
-        if(node) {
-            set->Add(node->key);
-            UnionPath(node->left, set);
-            UnionPath(node->right, set);
-        }
+    Tree<T> GetTree(){
+        return tree;
     }
 
-    Set<T> *IntersectionPath(Node *root1, Node *root2)
-    {
-        // Create two stacks for two inorder traversals
-        Set<T>* result = new Set<T>();
-        ArraySequence<Node *> s1, s2;
-
-        while (true)
-        {
-            // push the Nodes of first tree in stack s1
-            if (root1)
-            {
-                s1.Append(root1);
-                root1 = root1->left;
-            }
-
-                // push the Nodes of second tree in stack s2
-            else if (root2)
-            {
-                s2.Append(root2);
-                root2 = root2->left;
-            }
-
-                // Both root1 and root2 are NULL here
-            else if (s1.GetLength() > 0 && s2.GetLength() > 0)
-            {
-                root1 = s1.GetLast();
-                root2 = s2.GetLast();
-
-                // If current keys in two trees are same
-                if (root1->key == root2->key)
-                {
-                    result->Append(root1->key);
-                    s1.PopLast();
-                    s2.PopLast();
-
-                    // move to the inorder successor
-                    root1 = root1->right;
-                    root2 = root2->right;
-                }
-
-                else if (root1->key < root2->key)
-                {
-                    // If Node of first tree is smaller, than that of
-                    // second tree, then its obvious that the inorder
-                    // successors of current Node can have same value
-                    // as that of the second tree Node. Thus, we pop
-                    // from s2
-                    s1.PopLast();
-                    root1 = root1->right;
-
-                    // root2 is set to NULL, because we need
-                    // new Nodes of tree 1
-                    root2 = NULL;
-                }
-                else if (root1->key > root2->key)
-                {
-                    s2.PopLast();
-                    root2 = root2->right;
-                    root1 = NULL;
-                }
-            }
-
-                // Both roots and both stacks are empty
-            else  break;
-        }
-        return result;
-    }
-
-    Set<T> *SubstractionPath(Node *root1, Node *root2, Set<T> set)
-    {
-        // Create two stacks for two inorder traversals
-        Set<T>* result = new Set<T>(set);
-        ArraySequence<Node *> s1, s2;
-
-        while (true)
-        {
-            // push the Nodes of first tree in stack s1
-            if (root1)
-            {
-                s1.Append(root1);
-                root1 = root1->left;
-            }
-
-                // push the Nodes of second tree in stack s2
-            else if (root2)
-            {
-                s2.Append(root2);
-                root2 = root2->left;
-            }
-
-                // Both root1 and root2 are NULL here
-            else if (s1.GetLength() > 0 && s2.GetLength() > 0)
-            {
-                root1 = s1.GetLast();
-                root2 = s2.GetLast();
-
-                // If current keys in two trees are same
-                if (root1->key == root2->key)
-                {
-                    result->Delete(root1->key);
-                    s1.PopLast();
-                    s2.PopLast();
-
-                    // move to the inorder successor
-                    root1 = root1->right;
-                    root2 = root2->right;
-                }
-
-                else if (root1->key < root2->key)
-                {
-                    // If Node of first tree is smaller, than that of
-                    // second tree, then its obvious that the inorder
-                    // successors of current Node can have same value
-                    // as that of the second tree Node. Thus, we pop
-                    // from s2
-                    s1.PopLast();
-                    root1 = root1->right;
-
-                    // root2 is set to NULL, because we need
-                    // new Nodes of tree 1
-                    root2 = NULL;
-                }
-                else if (root1->key > root2->key)
-                {
-                    s2.PopLast();
-                    root2 = root2->right;
-                    root1 = NULL;
-                }
-            }
-
-                // Both roots and both stacks are empty
-            else  break;
-        }
-        return result;
-    }
-
-    bool SubSetPath(Node *root1, Node *root2, Set<T> set)
-    {
-        Set<T> result = Set<T>();
-        ArraySequence<Node *> s1, s2;
-        while (true)
-        {
-            if (root1)
-            {
-                s1.Append(root1);
-                root1 = root1->left;
-            }
-            else if (root2)
-            {
-                s2.Append(root2);
-                root2 = root2->left;
-            }
-            else if (s1.GetLength() > 0 && s2.GetLength() > 0)
-            {
-                root1 = s1.GetLast();
-                root2 = s2.GetLast();
-
-                if (root1->key == root2->key)
-                {
-                    result.Append(root1->key);
-                    s1.PopLast();
-                    s2.PopLast();
-
-                    root1 = root1->right;
-                    root2 = root2->right;
-                }
-
-                else if (root1->key < root2->key)
-                {
-                    s1.PopLast();
-                    root1 = root1->right;
-                    root2 = NULL;
-                }
-                else if (root1->key > root2->key)
-                {
-                    s2.PopLast();
-                    root2 = root2->right;
-                    root1 = NULL;
-                }
-            }
-            else  break;
-        }
-        return set.IsEqual(result);
-    }
-
-    bool IsEqualNode(Node* node1, Node* node2){
-        if(node1 && node2){
-            if(node1->key == node2->key){
-                bool result = IsEqualNode(node1->left, node2->left) && IsEqualNode(node1->right, node2->right);
-                return result;
-            }
-            else{
-                return false;
-            }
-        }
-        if(!node1 && !node2){
-            return true;
-        }
-        return false;
-    }
-
-    void DisplayNode(Node* node){
-        if(node){
-            DisplayNode(node->left);
-            cout << node->key << ", ";
-            DisplayNode(node->right);
-        }
-    }
-    void DisplayNode(Node* node, bool isList){
-        if(node){
-            if(!isList) {
-                DisplayNode(node->left);
-                cout << node->key << ", ";
-                DisplayNode(node->right);
-            }
-            else{
-                DisplayNode(node->left, isList);
-                cout << node->key << "\n";
-                DisplayNode(node->right, isList);
-            }
-        }
-    }
-
-    void GetPath(Node* node, ArraySequence<T> *array){
-        if(node){
-            array->Append(node->key);
-            if(node->left) GetPath(node->left, array);
-            if(node->right) GetPath(node->right, array);
-        }
-    }
 public:
-    Set() = default;
+    Set() {
+        tree = Tree<T>();
+    };
     Set(initializer_list<T> items){
         for(T item : items){
-            this->Append(item);
+            this->Add(item);
         }
     }
-    explicit Set(Set<T>* set): Tree<T>(set){
-
+    explicit Set(Tree<T> newTree){
+        tree = newTree;
     }
-    Set(const Set& set): Tree<T>(set){
-
+    explicit Set(Set<T>* set){
+        tree = Tree<T>(set->tree);
     }
-    explicit Set(const Node& node): Tree<T>(node){
-
+    Set(const Set& set): Set(){
+        tree = Tree<T>(set.tree);
     }
 
     void Add(T value){
-        this->Append(value);
+        tree.Append(value);
     }
 
     void Delete(T value){
-        this->Remove(value);
+        tree.Remove(value);
     }
     bool Contains(T value){
-        return this->Search(value);
+        return tree.Search(value);
     }
-    Set<T> MapSet(T(*mapper)(T)){
+    template<typename T1>
+    Set<T1> MapSet(T1(*mapper)(T)){
         if (mapper == nullptr)
             throw std::invalid_argument("mapper is NULL");
-        Set<T> newSet = Set<T>();
-        this->Mapping(mapper, this->root, &newSet);
+        Tree<T1> newTree = tree.Map(mapper);
+        Set<T1> newSet = Set<T1>(newTree);
+        return newSet;
+    }
+
+    Set<T> Map(std::function<T(T)> const & mapper){
+        if (mapper == nullptr)
+            throw std::invalid_argument("mapper is NULL");
+        Tree<T> newTree = tree.Map(mapper);
+        Set<T> newSet = Set<T>(newTree);
         return newSet;
     }
     Set<T> WhereSet(bool(*predicate)(T)){
         if (predicate == nullptr)
             throw std::invalid_argument("predicate is NULL");
-        Set<T> newSet = Set<T>();
-        this->WherePath(predicate, this->root, &newSet);
+        Tree<T> newTree = tree.Where(predicate);
+        Set<T> newSet = Set<T>(newTree);
+        return newSet;
+    }
+    Set<T> Where(std::function<bool(T)> const & predicate){
+        if (predicate == nullptr)
+            throw std::invalid_argument("predicate is NULL");
+        Tree<T> newTree = tree.Where(predicate);
+        Set<T> newSet = Set<T>(newTree);
         return newSet;
     }
     T ReduceSet(T(*reducer)(T, T), T const &c){
         if (reducer == nullptr)
             throw std::invalid_argument("reducer is NULL");
-        T res = this->ReducePath(reducer, c, this->root);
+        T res = tree.Reduce(reducer, c);
         return res;
     }
 
     ISet<T>* Intersection(ISet<T> &set){
-        return IntersectionPath(((Set<T>&)set).root, this->root);
+        Set<T>* result = new Set<T>();
+        this->tree.Map([&](T item){
+            if(set.Contains(item)){
+                result->Add(item);
+            }
+            return item;
+        });
+        // return IntersectionPath(((Set<T>&)set).root, this->root);
+        return result;
     }
 
-    ISet<T>* Union(ISet<T> &set){
-        Set<T>* result = new Set<T>(*this);
-        UnionPath(((Set<T>&)set).root, result);
+    ISet<T>* Union(ISet<T> &set) {
+        Set<T>* result = new Set<T>((Set<T> &)set);
+        //UnionPath(((Set<T>&)set).root, result);
+        this->GetTree().Map([&](T item){
+            result->Add(item);
+            return item;
+        });
         return result;
     }
 
     ISet<T>* Substraction(ISet<T>& set){
-        return SubstractionPath(((Set<T>&)set).root, this->root, *this);
+        Set<T>* result = new Set<T>(*this);
+        this->tree.Map([&](T item){
+            if(set.Contains(item)){
+                result->Remove(item);
+            }
+            return item;
+        });
+        // return SubstractionPath(((Set<T>&)set).root, this->root, *this);
+        return result;
+    }
+
+    void Remove(T item){
+        tree.Remove(item);
     }
 
     ArraySequence<T> ToArray(){
         ArraySequence<T> res = ArraySequence<T>();
-        GetPath(this->root, &res);
+        // GetPath(this->root, &res);
+        tree.Map([&res](T item){
+            res.Append(item);
+            return item;
+        });
         SequenceSorter<T>::QuickSort(&res);
         return res;
     }
@@ -333,10 +146,17 @@ public:
     }
 
     bool IsSubSet(Set<T> set){
-        // auto array = set.ToArray();
+        auto array = set.ToArray();
+        bool isSub = true;
+        for(int i = 0; i < array.Count; i++){
+            if(!Contains(array[i])){
+                isSub = false;
+            }
+        }
         // auto myArray = this->ToArray();
-        return SubSetPath(set.root, this->root, set);
+        // return SubSetPath(set.root, this->root, set);
         // return myArray.SubSequenceSearch(&array);
+        return isSub;
     }
 
     bool operator==(Set<T> set){
@@ -352,14 +172,26 @@ public:
         return (Set<T>*)Substraction(set);
     }
 
+    T* GetValue(T value){
+        return tree.GetValue(value);
+    }
+
     void Display(){
         cout << "(";
-        if(this->root) DisplayNode(this->root);
+        tree.Map([](T item){
+            cout << item << ", ";
+            return item;
+        });
+        // if(this->root) DisplayNode(this->root);
         cout << ")\n";
     }
     void Display(bool isList){
         cout << "(\n";
-        if(this->root) DisplayNode(this->root, isList);
+        tree.Map([](T item){
+            cout << item << ",\n";
+            return item;
+        });
+        // if(this->root) DisplayNode(this->root, isList);
         cout << ")\n";
     }
 };

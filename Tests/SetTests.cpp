@@ -26,7 +26,6 @@ TEST(SetTest, Init){
     Set<int> set = Set<int>();
     EXPECT_ANY_THROW(set.Delete(0));
     // EXPECT_ANY_THROW(set.Contains((int)nullptr));
-    EXPECT_ANY_THROW(set.Contains(1));
     set.Add(0);
     set.Add(1);
     set.Add(2);
@@ -106,7 +105,6 @@ TEST(SetTest, Inersection){
     Set<int> set = Set<int>({1, 2, 3, 4, 5});
     Set<int> set1 = Set<int>({4, 5, 6, 7, 8});
     auto intersection = set & set1;
-    intersection->Display();
     //Set<int> intersection = Set<int>(sets);
     ASSERT_TRUE(intersection->IsEqual(Set<int>({4, 5})));
 }
@@ -116,6 +114,7 @@ TEST(SetTest, Union){
     Set<int> set1 = Set<int>({4, 5, 6, 7, 8});
     //Set<int>* uni = set|set1;
     Set<int> uni = Set<int>(set | set1);
+    uni.Display();
     auto sets = Set<int>({1, 2, 3, 4, 5, 6, 7, 8});
     ASSERT_TRUE(uni.IsEqual(Set<int>({1, 2, 3, 4, 5, 6, 7, 8})));
 }

@@ -11,10 +11,7 @@ protected:
     public:
         TKey key;
         TValue value;
-        Pair(){
-            key = TKey();
-            value = TValue();
-        }
+        Pair() = default;
         Pair(TKey key, TValue value){
             this->key = key;
             this->value = value;
@@ -26,16 +23,16 @@ protected:
             return key != pair.key || value != pair.value;
         }
         bool operator>(Pair pair){
-            return value > pair.value;
+            return key > pair.key;
         }
         bool operator<(Pair pair){
-            return value <= pair.value;
+            return key < pair.key;
         }
         bool operator>=(Pair pair){
-            return value >= pair.value;
+            return key >= pair.key;
         }
         bool operator<=(Pair pair){
-            return value <= pair.value;
+            return key <= pair.key;
         }
         friend ostream& operator<<(ostream &out, const Pair& pair){
             out << "key: ";
@@ -78,36 +75,35 @@ public:
 
     void Remove(TKey key){
         TValue value = Get(key);
-        Set<Pair> set = Set<Pair>();
-        set.Add(Pair(key, value));
-        items.Substraction(set);
+        // Set<Pair> set = Set<Pair>();
+        // set.Add(Pair(key, value));
+        items.Remove(Pair(key, value));
+        // items.Substraction(set);
         count--;
         //items.Delete(Pair(key, value));
     }
 
     TValue &Get(TKey key){
-        auto array = items.ToArray();
         TValue value;
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array.Get(i).key == key) value = array.Get(i).value;
+        items.Map([&](Pair pair){
+            if(pair.key == key){
+                value = pair.value;
+            }
+            return pair;
+        });
+        Pair * pair = items.GetValue(Pair(key, value));
+        if(pair){
+            return pair->value;
         }
-        if(items.GetValue(Pair(key, value)))
-            return items.GetValue(Pair(key, value))->value;
-        else
-            throw std::runtime_error("This KEY does not exists!");
-            // return *value;
-            // throw std::range_error("This KEY does not exists!");
-        // throw std::range_error("This KEY does not exists!");
+        throw std::runtime_error("This KEY does not exists!");
     }
 
-    TValue& operator[](TKey key){
-        // TValue value = Get(key);
-        // auto pair = Pair(key, value);
-        // return items.GetValue(Pair(key, value)).value;
+    TValue& operator[](const TKey &key){
         return Get(key);
     }
 
     bool operator==(Dictionary<TKey, TValue> dictionary){
+        if(GetCount() == 0 && dictionary.GetCount() == 0) return true;
         return items.IsEqual(dictionary.items);
     }
 

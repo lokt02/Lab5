@@ -23,8 +23,8 @@ protected:
             if(node){
                key = node->key;
                height = node->height;
-               left = new Node(*(node->left));
-               right = new Node(*(node->right));
+               if(node->left) left = new Node(node->left);
+                if(node->right) right = new Node(node->right);
             }
         }
         Node():Node(nullptr){};
@@ -115,6 +115,18 @@ protected:
         // node->key = temp;
         if (node->left) Mapping(mapper, node->left, tree);
         if (node->right) Mapping(mapper, node->right, tree);
+    }
+
+    void Mapping(std::function<T(T)> const & mapper, Node* node, Tree<T>* tree){
+        if (mapper == nullptr)
+            throw std::invalid_argument("mapper is NULL");
+        // auto temp = mapper(node->key);
+        if(node) {
+            tree->Append(mapper(node->key));
+            // node->key = temp;
+            if (node->left) Mapping(mapper, node->left, tree);
+            if (node->right) Mapping(mapper, node->right, tree);
+        }
     }
 
     void WherePath(bool(*predicate)(T), Node* node, Tree<T> *tree){
@@ -229,38 +241,38 @@ public:
         if(&key == nullptr || !root){
             throw std::range_error("You cant remove NULL");
         }
-        return Delete(root, key);
+        return Delete(&root, key);
     }
-    Node* Delete(Node *node, T key) {
-        if(node == nullptr) return node;
-        else if(key < node->key) node->left = Delete(node->left, key);
-        else if (key > node->key) node->right = Delete(node->right, key);
+    Node* Delete(Node **node, T key) {
+        if(*node == nullptr) return *node;
+        else if(key < (*node)->key) (*node)->left = Delete(&(*node)->left, key);
+        else if (key > (*node)->key) (*node)->right = Delete(&(*node)->right, key);
             // Wohoo... I found you, Get ready to be deleted
         else {
             // Case 1:  No child
-            if(node->left == nullptr && node->right == nullptr) {
-                delete node;
-                node = nullptr;
+            if((*node)->left == nullptr && (*node)->right == nullptr) {
+                delete *node;
+                *node = nullptr;
             }
                 //Case 2: One child
-            else if(node->left == NULL) {
-                struct Node *temp = node;
-                node = node->right;
+            else if((*node)->left == NULL) {
+                struct Node *temp = *node;
+                *node = (*node)->right;
                 delete temp;
             }
-            else if(node->right == NULL) {
-                struct Node *temp = node;
-                node = node->left;
+            else if((*node)->right == NULL) {
+                struct Node *temp = *node;
+                *node = (*node)->left;
                 delete temp;
             }
                 // case 3: 2 children
             else {
-                Node *temp = FindMin(node->right);
-                node->key = temp->key;
-                node->right = Delete(node->right, temp->key);
+                Node *temp = FindMin((*node)->right);
+                (*node)->key = temp->key;
+                (*node)->right = Delete(&(*node)->right, temp->key);
             }
         }
-        return node;
+        return *node;
     }
 
     bool Search(T key){
@@ -289,19 +301,19 @@ public:
         if(&key == nullptr || !root){
             throw std::range_error("You cant search NULL");
         }
-        Node** current = &root;
-        while (*current){
-            Node& node = **current;
+        Node* current = root;
+        while (current){
+            Node& node = *current;
             if(key < node.key){
-                current = &node.left;
+                current = node.left;
             }
             else{
                 if(key > node.key){
-                    current = &node.right;
+                    current = node.right;
                 }
                 else{
-                    if((*current)->key == key)
-                        return &((*current)->key);
+                    if(node.key == key)
+                        return &(node.key);
                 }
             }
         }
@@ -390,7 +402,22 @@ public:
         Mapping(mapper, this->root, &newTree);
         return newTree;
     }
+
+    Tree<T> Map(std::function<T(T)> const & mapper){
+        if (mapper == nullptr)
+            throw std::invalid_argument("mapper is NULL");
+        Tree<T> newTree = Tree<T>();
+        Mapping(mapper, this->root, &newTree);
+        return newTree;
+    }
     Tree<T> Where(bool(*predicate)(T)){
+        if (predicate == nullptr)
+            throw std::invalid_argument("predicate is NULL");
+        Tree<T> newTree = Tree<T>();
+        WherePath(predicate, this->root, &newTree);
+        return newTree;
+    }
+    Tree<T> Where(std::function<bool(T)> const & predicate){
         if (predicate == nullptr)
             throw std::invalid_argument("predicate is NULL");
         Tree<T> newTree = Tree<T>();
@@ -402,6 +429,20 @@ public:
             throw std::invalid_argument("reducer is NULL");
         T res = ReducePath(reducer, c, root);
         return res;
+    }
+    T Reduce(std::function<T(T, T)> const & reducer, T const &c){
+        if (reducer == nullptr)
+            throw std::invalid_argument("reducer is NULL");
+        T res = ReducePath(reducer, c, root);
+        return res;
+    }
+
+    Tree<T> &operator=(const Tree<T> &tree){
+        if(&tree != this && tree.root != nullptr) {
+            DestroyNode(root);
+            root = new Node(tree.root);
+        }
+        return *this;
     }
 
     void PreOrder(Node *node, int ctr)
