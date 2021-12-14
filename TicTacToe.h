@@ -22,6 +22,14 @@ private:
             for(int i = 1; i <= 9; i++) field.Add(i, 0);
             children = ArraySequence<Node*>();
         };
+
+        bool FieldFull(){
+            bool res = true;
+            for(int i = 1; i <= 9; i++){
+                if(field[i] == 0) res = false;
+            }
+            return res;
+        };
     };
     Node* firstState;
     int turn;
@@ -43,6 +51,8 @@ public:
     void BuildTree(Node* node){
         for(int i = 1; i <= 9; i++){
             FieldType currentField = node->field;
+            if(node->FieldFull()) break;
+
             if(currentField[i] == 0){
                 currentField[i] = turn;
                 Node* newNode = new Node();
@@ -78,14 +88,7 @@ public:
     }
 
     void NextTurn(){
-        if(turn == 1){
-            turn = 2;
-            return;
-        }
-        if(turn == 2){
-            turn = 1;
-            return;
-        }
+        turn = turn % 2 + 1;
     }
 
     void Output(Node* node){
@@ -95,7 +98,6 @@ public:
         }
         std::cout << "-------------------\n";
         for(int i = 0; i < node->children.GetLength(); i++){
-            std::cout << "===============\n";
             Output(node->children[i]);
         }
     }

@@ -176,23 +176,9 @@ public:
         return tree.GetValue(value);
     }
 
-    void Display(){
-        cout << "(";
-        tree.Map([](T item){
-            cout << item << ", ";
-            return item;
-        });
-        // if(this->root) DisplayNode(this->root);
-        cout << ")\n";
-    }
-    void Display(bool isList){
-        cout << "(\n";
-        tree.Map([](T item){
-            cout << item << ",\n";
-            return item;
-        });
-        // if(this->root) DisplayNode(this->root, isList);
-        cout << ")\n";
+    size_t GetLength(){
+        auto temp = this->ToArray();
+        return temp.GetLength();
     }
 };
 
