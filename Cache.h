@@ -8,7 +8,7 @@ template<class T>
 class Cache{
 private:
     Dictionary<T, unsigned long> cache;
-    int length;
+    int length{};
 
     void RemoveUnused(){
         unsigned long x = MostUnused();
@@ -26,19 +26,19 @@ private:
 
     unsigned long MostUnused(){
         unsigned long min = -1;
-        cache.Map([&](T val, unsigned long key){
-            if(key < min){
-                min = key;
+        cache.Map([&](Pair<T, unsigned long> pair){
+            if(pair.value < min){
+                min = pair.value;
             }
-            return Pair<T, unsigned long>(val, key);
+            return pair;
         });
 
         return min;
     }
 
 public:
-    Cache() = 0;
-    Cache(int length) : Cache(){
+    Cache() = default;;
+    explicit Cache(int length) : Cache(){
         this->length = length;
     }
     Cache(std::initializer_list<T> list){

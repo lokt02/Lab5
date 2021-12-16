@@ -5,50 +5,51 @@
 #include "Set.h"
 
 template<typename TKey, typename TValue>
+class Pair{
+public:
+    TKey key;
+    TValue value;
+    Pair() = default;
+    Pair(TKey key, TValue value){
+        this->key = key;
+        this->value = value;
+    }
+    bool operator==(Pair pair){
+        return key == pair.key && value == pair.value;
+    }
+    bool operator!=(Pair pair){
+        return key != pair.key || value != pair.value;
+    }
+    bool operator>(Pair pair){
+        return key > pair.key;
+    }
+    bool operator<(Pair pair){
+        return key < pair.key;
+    }
+    bool operator>=(Pair pair){
+        return key >= pair.key;
+    }
+    bool operator<=(Pair pair){
+        return key <= pair.key;
+    }
+    friend ostream& operator<<(ostream &out, const Pair& pair){
+        out << "key: ";
+        out << pair.key;
+        out << "; ";
+        out << "value: ";
+        out << pair.value;
+        return out;
+    }
+};
+
+template<typename TKey, typename TValue>
 class Dictionary: public IDictionary<TKey, TValue>{
-protected:
-    class Pair{
-    public:
-        TKey key;
-        TValue value;
-        Pair() = default;
-        Pair(TKey key, TValue value){
-            this->key = key;
-            this->value = value;
-        }
-        bool operator==(Pair pair){
-            return key == pair.key && value == pair.value;
-        }
-        bool operator!=(Pair pair){
-            return key != pair.key || value != pair.value;
-        }
-        bool operator>(Pair pair){
-            return key > pair.key;
-        }
-        bool operator<(Pair pair){
-            return key < pair.key;
-        }
-        bool operator>=(Pair pair){
-            return key >= pair.key;
-        }
-        bool operator<=(Pair pair){
-            return key <= pair.key;
-        }
-        friend ostream& operator<<(ostream &out, const Pair& pair){
-            out << "key: ";
-            out << pair.key;
-            out << "; ";
-            out << "value: ";
-            out << pair.value;
-            return out;
-        }
-    };
 private:
-    Set<Pair> items;
+    Set<Pair<TKey, TValue>> items;
     size_t count;
 public:
     Dictionary(){
-        items = Set<Pair>();
+        items = Set<Pair<TKey, TValue>>();
         count = 0;
     }
 
@@ -69,7 +70,7 @@ public:
         for(int i = 0; i < array.GetLength(); i++){
             if(array.Get(i).key == key) throw std::range_error("This KEY already exists!");
         }
-        items.Add(Pair(key, value));
+        items.Add(Pair<TKey, TValue>(key, value));
         count++;
     }
 
@@ -85,13 +86,13 @@ public:
 
     TValue &Get(TKey key){
         TValue value;
-        items.Map([&](Pair pair){
+        items.Map([&](Pair<TKey, TValue> pair){
             if(pair.key == key){
                 value = pair.value;
             }
             return pair;
         });
-        Pair * pair = items.GetValue(Pair(key, value));
+        Pair<TKey, TValue> * pair = items.GetValue(Pair(key, value));
         if(pair){
             return pair->value;
         }
@@ -105,7 +106,7 @@ public:
     TKey FindByValue(const TValue& value){
         TKey key;
         int count = 0;
-        items.Map([&](Pair pair){
+        items.Map([&](Pair<TKey, TValue> pair){
             if(pair.value == value){
                 key = pair.key;
                 count++;
@@ -121,7 +122,7 @@ public:
         return items.IsEqual(dictionary.items);
     }
 
-    Dictionary Map(std::function<Pair(TKey, TValue)> const & mapper){
+    Dictionary Map(std::function<Pair<TKey, TValue>(Pair<TKey, TValue>)> const & mapper){
         Dictionary<TKey, TValue> newDict = Dictionary<TKey, TValue>();
         newDict.items = items.Map(mapper);
         return newDict;
