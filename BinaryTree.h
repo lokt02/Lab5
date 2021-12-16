@@ -1,9 +1,8 @@
-//
-// Created by lokt0 on 22.05.2021.
-//
-
 #ifndef LAB5_BINARYTREE_H
 #define LAB5_BINARYTREE_H
+
+#include <iostream>
+#include <functional>
 
 template<class T>
 class Tree{

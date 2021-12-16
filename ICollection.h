@@ -1,9 +1,7 @@
-//
-// Created by lokt on 13.04.2021.
-//
-
 #ifndef LAB5_ICOLLECTION_H
 #define LAB5_ICOLLECTION_H
+
+#include <iostream>
 
 template<class T>
 class ICollection {

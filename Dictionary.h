@@ -102,13 +102,29 @@ public:
         return Get(key);
     }
 
+    TKey FindByValue(const TValue& value){
+        TKey key;
+        int count = 0;
+        items.Map([&](Pair pair){
+            if(pair.value == value){
+                key = pair.key;
+                count++;
+            }
+            return pair;
+        });
+        if(count == 0) std::runtime_error("Value with this KEY does not exists!");
+        return key;
+    }
+
     bool operator==(Dictionary<TKey, TValue> dictionary){
         if(GetCount() == 0 && dictionary.GetCount() == 0) return true;
         return items.IsEqual(dictionary.items);
     }
 
-    void Display(){
-        items.Display();
+    Dictionary Map(std::function<Pair(TKey, TValue)> const & mapper){
+        Dictionary<TKey, TValue> newDict = Dictionary<TKey, TValue>();
+        newDict.items = items.Map(mapper);
+        return newDict;
     }
 };
 

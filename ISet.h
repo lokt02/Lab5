@@ -5,6 +5,8 @@
 #ifndef LAB5_ISET_H
 #define LAB5_ISET_H
 
+#include <iostream>
+
 template<typename T>
 class ISet{
 public:
