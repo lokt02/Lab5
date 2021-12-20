@@ -5,13 +5,13 @@
 #include "Dictionary.h"
 
 template<class T, size_t size>
-struct Hash{
+struct HashFunction{
     unsigned long int operator()(const T& value) const {
         return reinterpret_cast<unsigned long>(value) % size;
     }
 };
 
-template<class T, typename F = Hash<T, 100>>
+template<class T, typename F = HashFunction<T, 100>>
 class HashTable : IDictionary<unsigned long int, T>{
 private:
     Dictionary<unsigned long int, T> table;

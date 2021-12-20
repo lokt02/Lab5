@@ -4,6 +4,7 @@
 #include "Indexes.h"
 #include "Dictionary.h"
 #include "ArraySequence.h"
+#include "Graph.h"
 #include <random>
 #include <chrono>
 
