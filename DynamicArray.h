@@ -146,13 +146,6 @@ public:
         this->Set(this->GetSize() - 1, item);
     }
 
-    void Display() {
-        for (size_t i = 0; i < this->Count; i++) {
-            std::cout << this->Get(i) << " ";
-        }
-        std::cout << std::endl;
-    }
-
     DynamicArray<T> *Clone() const {
         return new DynamicArray<T>(this->items);
     }

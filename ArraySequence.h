@@ -202,13 +202,6 @@ public:
         this->Count = items.Count;
         return *this;
     }
-
-    void Display(){
-        for(size_t i = 0; i < items.Count; i++){
-            std::cout << this->Get(i) << " ";
-        }
-        std::cout << std::endl;
-    }
 };
 
 
