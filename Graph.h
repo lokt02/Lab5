@@ -13,8 +13,8 @@ private:
     ArraySequence<Arc<T, T1>*> inArcs;
     ArraySequence<Arc<T, T1>*> outArcs;
     T1 distance;
-    Node<T, T1> *previous;
 public:
+    Node<T, T1> *previous;
     Node(int id, T data) {
         this->id = id;
         this->data = data;
@@ -131,7 +131,7 @@ public:
     }
 
     void Append(T data){
-        auto node = new Node<T, T1>(data, GetNodesCount());
+        auto node = new Node<T, T1>(GetNodesCount(), data);
         AddNode(node);
     }
 
@@ -164,6 +164,20 @@ public:
             }
         }
         return false;
+    }
+    template<class R>
+    void Delete(R data, ArraySequence<R>& array){
+        for(int i = 0; i < array.GetLength(); i++){
+            if(array[i] == data){
+                array.RemoveAt(i);
+            }
+        }
+    }
+
+    ArraySequence<Arc<T, T1>*> GetShortestPathByID(int start, int end){
+        auto node1 = nodes[start];
+        auto node2 = nodes[end];
+        return GetShortestPath(node1, node2);
     }
 
     ArraySequence<Arc<T, T1>*> GetShortestPath(Node<T, T1>* start, Node<T, T1>* end){
@@ -206,6 +220,7 @@ public:
                     adj->previous = smallest;
                 }
             }
+            Delete(smallest, localNodes);
         }
 
         // Making path
@@ -222,7 +237,7 @@ public:
             cur = previous;
             previous = previous->previous;
         }
-        
+
         return shortest;
     }
 };
