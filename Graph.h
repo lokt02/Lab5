@@ -12,10 +12,13 @@ private:
     T data;
     ArraySequence<Arc<T, T1>*> inArcs;
     ArraySequence<Arc<T, T1>*> outArcs;
+    T1 distance;
+    Node<T, T1> *previous;
 public:
     Node(int id, T data) {
         this->id = id;
         this->data = data;
+        previous = nullptr;
     }
 
     Node():Node(int(), T()){}
@@ -27,6 +30,12 @@ public:
     }
     T GetData(){
         return data;
+    }
+    T1 GetDist(){
+        return distance;
+    }
+    void SetDist(T1 dist){
+        distance = dist;
     }
 
     ArraySequence<Arc<T, T1>*> GetOut(){
@@ -158,52 +167,63 @@ public:
     }
 
     ArraySequence<Arc<T, T1>*> GetShortestPath(Node<T, T1>* start, Node<T, T1>* end){
-        auto unvisited = ArraySequence<Node<T, T1>*>();
-        auto visited = ArraySequence<bool>();
-        auto tentativeDistance = ArraySequence<T1>();
+        ArraySequence<Node<T, T1>*> localNodes = ArraySequence<Node<T, T1>*>(nodes);
+        // Assign the shortest path collection (set)
+        ArraySequence<Arc<T, T1>*> shortest = ArraySequence<Arc<T, T1>*>();
+        // Assign distances of all nodes
         for(int i = 0; i < nodes.GetLength(); i++){
-            if(nodes[i]->id != start->id){
-                unvisited.Append(nodes[i]);
-                visited.Append(false);
-                tentativeDistance.Append(std::numeric_limits<T1>::max());
+            if(nodes[i] == start){
+                nodes[i]->SetDist(T1());
             }
-            else{
-                visited.Append(true);
-                tentativeDistance.Append(T1());
+            else {
+                nodes[i]->SetDist(std::numeric_limits<T1>::max());
             }
         }
 
-        auto current = start;
-        size_t count = 0;
-        while (unvisited.GetLength() >= count) {
-            // Get arc that lead to neighbors
-            ArraySequence<Arc<T, T1>*> neighbors = current->GetOut();
-            auto unvisitedNeighbors = ArraySequence<Arc<T, T1>*>();
-
-            // Get unvisited neighbors
-            for(int i = 0; i < neighbors.GetLength(); i++){
-                Node<T, T1>* neighbor = neighbors[i]->GetEndNode();
-                if(!visited[neighbor->GetID()]){
-                    unvisitedNeighbors.Append(neighbors[i]);
+        while(localNodes.GetLength() > 0){
+            // Find min and smallest
+            T1 min = std::numeric_limits<T1>::max();
+            Node<T, T1>* smallest;
+            for(int i = 0; i < localNodes.GetLength(); i++){
+                if(localNodes[i]->GetDist() < min){
+                    min = localNodes[i]->GetDist();
+                    smallest = localNodes[i];
                 }
             }
+            // Get adjacent nodes
+            ArraySequence<Node<T, T1>*> adjacentNodes = ArraySequence<Node<T, T1>*>();
+            ArraySequence<Arc<T, T1>*> adjacentArcs = smallest->GetOut();
+            for(int i = 0; i < adjacentArcs.GetLength(); i++){
+                adjacentNodes.Append(adjacentArcs[i]->GetEndNode());
+            }
 
-            // Get distance between start node and neighbor's node
-            for (int i = 0; i < unvisitedNeighbors.GetLength(); i++) {
-                Node<T, T1>* uNeighbor = unvisitedNeighbors[i]->GetEndNode();
-                T1 dist = unvisitedNeighbors[i]->GetData() + tentativeDistance[current->GetID()];
-                if (dist < tentativeDistance[uNeighbor->GetID()]) {
-                    tentativeDistance[uNeighbor->GetID()] = dist;
+            for(int i = 0; i < adjacentNodes.GetLength(); i++){
+                auto adj = adjacentNodes[i];
+                T1 distance = adjacentArcs[i]->GetData() + smallest->GetDist();
+
+                if(distance < adj->GetDist()){
+                    adj->SetDist(distance);
+                    adj->previous = smallest;
                 }
             }
-            visited[current->GetID()] = true;
-            if(visited[end->GetID()]){
-                // Return shortest path
-                break;
+        }
+
+        // Making path
+        Node<T, T1>* previous = end->previous;
+        Node<T, T1>* cur = end;
+        while(previous){
+            auto arcsInNode = cur->GetIn();
+            for(int i = 0; i < arcsInNode.GetLength(); i++){
+                if(arcsInNode[i]->GetStartNode() == previous){
+                    shortest.Append(arcsInNode[i]);
+                    break;
+                }
             }
-            current = unvisited[count];
-            count++;
-        };
+            cur = previous;
+            previous = previous->previous;
+        }
+        
+        return shortest;
     }
 };
 
