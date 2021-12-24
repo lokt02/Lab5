@@ -44,6 +44,11 @@ public:
     ArraySequence<Arc<T, T1>*> GetIn(){
         return inArcs;
     }
+    ArraySequence<Arc<T, T1>*> GetInOut(){
+        auto temp = ArraySequence<Arc<T, T1>*>(outArcs);
+        auto temp1 = ArraySequence<Arc<T, T1>*>(temp.Concat(inArcs));
+        return temp1;
+    }
     void AddInArc(Arc<T, T1>* inArc){
         inArcs.Append(inArc);
     }
@@ -91,16 +96,6 @@ public:
         return startNode == arc.GetStartNode() && endNode == arc.GetEndNode() && data == arc.GetData() && id == arc.GetID();
     }
 };
-
-//template<class T>
-//class Path{
-//private:
-//    ArraySequence<Arc<T>> arcs;
-//public:
-//    ArraySequence<Arc<T>> GetArcs(){
-//        return arcs;
-//    }
-//};
 
 template<class T, typename T1>
 class Graph{
@@ -170,8 +165,10 @@ public:
         for(int i = 0; i < array.GetLength(); i++){
             if(array[i] == data){
                 array.RemoveAt(i);
+                return;
             }
         }
+        std::runtime_error("There is no such element in this array");
     }
 
     ArraySequence<Arc<T, T1>*> GetShortestPathByID(int start, int end){
@@ -185,30 +182,37 @@ public:
         // Assign the shortest path collection (set)
         ArraySequence<Arc<T, T1>*> shortest = ArraySequence<Arc<T, T1>*>();
         // Assign distances of all nodes
-        for(int i = 0; i < nodes.GetLength(); i++){
-            if(nodes[i] == start){
-                nodes[i]->SetDist(T1());
+        for(int i = 0; i < localNodes.GetLength(); i++){
+            if(localNodes[i] == start){
+                localNodes[i]->SetDist(T1());
             }
             else {
-                nodes[i]->SetDist(std::numeric_limits<T1>::max());
+                localNodes[i]->SetDist(std::numeric_limits<T1>::max());
             }
         }
 
         while(localNodes.GetLength() > 0){
             // Find min and smallest
             T1 min = std::numeric_limits<T1>::max();
-            Node<T, T1>* smallest;
+            Node<T, T1>* smallest = nullptr;
             for(int i = 0; i < localNodes.GetLength(); i++){
                 if(localNodes[i]->GetDist() < min){
                     min = localNodes[i]->GetDist();
                     smallest = localNodes[i];
                 }
             }
+            if(!smallest) break;
             // Get adjacent nodes
             ArraySequence<Node<T, T1>*> adjacentNodes = ArraySequence<Node<T, T1>*>();
-            ArraySequence<Arc<T, T1>*> adjacentArcs = smallest->GetOut();
+            ArraySequence<Arc<T, T1>*> adjacentArcs = smallest->GetInOut();
             for(int i = 0; i < adjacentArcs.GetLength(); i++){
-                adjacentNodes.Append(adjacentArcs[i]->GetEndNode());
+                if(start != adjacentArcs[i]->GetEndNode()) {
+                    adjacentNodes.Append(adjacentArcs[i]->GetEndNode());
+                }
+                else {
+                    if(start != adjacentArcs[i]->GetStartNode())
+                        adjacentNodes.Append(adjacentArcs[i]->GetStartNode());
+                }
             }
 
             for(int i = 0; i < adjacentNodes.GetLength(); i++){
