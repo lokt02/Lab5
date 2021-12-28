@@ -98,7 +98,7 @@ public:
 };
 
 template<class T, typename T1>
-class Graph{
+class DiGraph{
 private:
     ArraySequence<Node<T, T1>*> nodes;
     ArraySequence<Arc<T, T1>*> arcs;
@@ -140,7 +140,7 @@ public:
     bool ArcExists(Node<T, T1>* node1, Node<T, T1>* node2){
         for(int i = 0; i < arcs.GetLength(); i++){
             if(arcs[i]->GetStartNode() == node1 && arcs[i]->GetEndNode() == node2
-            || arcs[i]->GetStartNode() == node2 && arcs[i]->GetEndNode() == node1)
+               || arcs[i]->GetStartNode() == node2 && arcs[i]->GetEndNode() == node1)
                 return true;
         }
         return false;
@@ -257,5 +257,3 @@ public:
         return shortest;
     }
 };
-
-// TODO: There might be zero and negative weights in Graph. FIX IT!

@@ -20,7 +20,16 @@ bool Contains(R data, ArraySequence<R> array){
 }
 
 int main() {
-    srand (time(nullptr));
+
+
+    return 0;
+}
+
+void RandomGraph(){
+    auto temp9 = time(nullptr);
+    cout << temp9 << endl;
+//    srand (1640713082);
+    srand (temp9);
     int temp = rand() % 6 + 6;
     Graph<int, int> g = Graph<int, int>();
     for(int i = 0; i < temp; i++){
@@ -42,7 +51,10 @@ int main() {
     }
     cout << "\n";
 
-    auto shortest = g.GetShortestPathByID(0, (int)nodes.GetLength()-1);
+//    int id1 = ((int)nodes.GetLength()-1) / 2;
+    int id1 = (int)nodes.GetLength()-1;
+    cout << id1 << endl;
+    auto shortest = g.GetShortestPathByID(0, id1);
     for(int i = (int)shortest.GetLength() - 1; i >= 0; i--){
         cout << shortest[i]->GetStartNode()->GetID() << " - " << shortest[i]->GetEndNode()->GetID() << " | ";
     }
@@ -57,6 +69,4 @@ int main() {
         cout << "\n";
     }
     cout << "\n\n";
-
-    return 0;
 }
