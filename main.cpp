@@ -1,6 +1,7 @@
 #include <iostream>
 #include "ArraySequence.h"
 #include "Graph.h"
+#include "DiGraph.h"
 #include <random>
 #include <functional>
 
@@ -19,11 +20,6 @@ bool Contains(R data, ArraySequence<R> array){
     return false;
 }
 
-int main() {
-
-
-    return 0;
-}
 
 void RandomGraph(){
     auto temp9 = time(nullptr);
@@ -70,3 +66,56 @@ void RandomGraph(){
     }
     cout << "\n\n";
 }
+
+void RandomDiGraph(){
+    auto temp9 = time(nullptr);
+    cout << temp9 << endl;
+//    srand (1640797783);
+    srand (temp9);
+    int temp = rand() % 6 + 6;
+    DiGraph<int, int> g = DiGraph<int, int>();
+    for(int i = 0; i < temp; i++){
+        int roll1 = rand() % 100;
+        g.Append(roll1);
+    }
+
+    int tempr = rand() % 20 + 1;
+    for(int i = 0; i < tempr; i++){
+        int temp1 = rand() % g.GetDiNodesCount();
+        if(i % g.GetDiNodesCount() != temp1 % g.GetDiNodesCount()) {
+            g.BindDiNodesByID(i % g.GetDiNodesCount(), temp1 % g.GetDiNodesCount(), rand() % 100);
+        }
+    }
+
+    auto nodes = g.GetDiNodes();
+    for(int i = 0; i < nodes.GetLength(); i++){
+        cout << nodes[i]->GetID() << " | ";
+    }
+    cout << "\n";
+
+//    int id1 = ((int)nodes.GetLength()-1) / 2;
+    int id1 = (int)nodes.GetLength()-1;
+    cout << id1 << endl;
+    auto shortest = g.GetShortestPathByID(0, id1);
+    for(int i = (int)shortest.GetLength() - 1; i >= 0; i--){
+        cout << shortest[i]->GetStartDiNode()->GetID() << " - " << shortest[i]->GetEndDiNode()->GetID() << " | ";
+    }
+    cout << "\n\n";
+
+    auto graphOutput = g.GetDiArcs();
+    for(int i = 0; i < graphOutput.GetLength(); i++){
+        cout << graphOutput[i]->GetStartDiNode()->GetID() << "->" << graphOutput[i]->GetEndDiNode()->GetID() << "[label=" << graphOutput[i]->GetData() << "]";
+        if(Contains(graphOutput[i], shortest)){
+            cout << "[color=red]";
+        }
+        cout << "\n";
+    }
+    cout << "\n\n";
+}
+
+int main() {
+    RandomDiGraph();
+
+    return 0;
+}
+

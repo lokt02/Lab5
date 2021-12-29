@@ -102,6 +102,53 @@ class Graph{
 private:
     ArraySequence<Node<T, T1>*> nodes;
     ArraySequence<Arc<T, T1>*> arcs;
+
+    template<class R>
+    bool Contains(R data, ArraySequence<R> array){
+        for(int i = 0; i < array.GetLength(); i++){
+            if(array[i] == data){
+                return true;
+            }
+        }
+        return false;
+    }
+    template<class R>
+    void Delete(R data, ArraySequence<R>& array){
+        for(int i = 0; i < array.GetLength(); i++){
+            if(array[i] == data){
+                array.RemoveAt(i);
+                return;
+            }
+        }
+        std::runtime_error("There is no such element in this array");
+    }
+
+    void AddNode(Node<T, T1>* node){
+        nodes.Append(node);
+    }
+    void AddArc(Arc<T, T1>* arc){
+        arcs.Append(arc);
+    }
+
+    Arc<T, T1>* BindNodes(Node<T, T1>* node1, Node<T, T1>* node2, T1 weight){
+        if(ArcExists(node1, node2)){
+            return nullptr;
+        }
+        auto arc = new Arc<T, T1>(node1, node2, weight, GetArcsCount());
+        node1->AddInOutArc(arc);
+        node2->AddInOutArc(arc);
+        AddArc(arc);
+        return arc;
+    }
+
+    bool ArcExists(Node<T, T1>* node1, Node<T, T1>* node2){
+        for(int i = 0; i < arcs.GetLength(); i++){
+            if(arcs[i]->GetStartNode() == node1 && arcs[i]->GetEndNode() == node2
+               || arcs[i]->GetStartNode() == node2 && arcs[i]->GetEndNode() == node1)
+                return true;
+        }
+        return false;
+    }
 public:
     Graph() = default;
 
@@ -130,66 +177,20 @@ public:
         AddNode(node);
     }
 
-    void AddNode(Node<T, T1>* node){
-        nodes.Append(node);
-    }
-    void AddArc(Arc<T, T1>* arc){
-        arcs.Append(arc);
-    }
-
-    bool ArcExists(Node<T, T1>* node1, Node<T, T1>* node2){
-        for(int i = 0; i < arcs.GetLength(); i++){
-            if(arcs[i]->GetStartNode() == node1 && arcs[i]->GetEndNode() == node2
-            || arcs[i]->GetStartNode() == node2 && arcs[i]->GetEndNode() == node1)
-                return true;
-        }
-        return false;
-    }
-
-    Arc<T, T1>* BindNodes(Node<T, T1>* node1, Node<T, T1>* node2, T1 weight){
-        if(ArcExists(node1, node2)){
-            return nullptr;
-        }
-        auto arc = new Arc<T, T1>(node1, node2, weight, GetArcsCount());
-        node1->AddInOutArc(arc);
-        node2->AddInOutArc(arc);
-        AddArc(arc);
-        return arc;
-    }
-
     void BindNodesByID(int id1, int id2, T1 weight){
         auto node1 = nodes[id1];
         auto node2 = nodes[id2];
         BindNodes(node1, node2, weight);
     }
 
-    template<class R>
-    bool Contains(R data, ArraySequence<R> array){
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array[i] == data){
-                return true;
-            }
-        }
-        return false;
-    }
-    template<class R>
-    void Delete(R data, ArraySequence<R>& array){
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array[i] == data){
-                array.RemoveAt(i);
-                return;
-            }
-        }
-        std::runtime_error("There is no such element in this array");
-    }
-
     ArraySequence<Arc<T, T1>*> GetShortestPathByID(int start, int end){
         auto node1 = nodes[start];
         auto node2 = nodes[end];
-        return GetShortestPath(node1, node2);
+        return GetShortestPathDjikstra(node1, node2);
     }
 
-    ArraySequence<Arc<T, T1>*> GetShortestPath(Node<T, T1>* start, Node<T, T1>* end){
+private:
+    ArraySequence<Arc<T, T1>*> GetShortestPathDjikstra(Node<T, T1>* start, Node<T, T1>* end){
         ArraySequence<Node<T, T1>*> localNodes = ArraySequence<Node<T, T1>*>(nodes);
         // Assign the shortest path collection (set)
         ArraySequence<Arc<T, T1>*> shortest = ArraySequence<Arc<T, T1>*>();
