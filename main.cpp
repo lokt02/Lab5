@@ -50,9 +50,19 @@ void RandomGraph(){
 //    int id1 = ((int)nodes.GetLength()-1) / 2;
     int id1 = (int)nodes.GetLength()-1;
     cout << id1 << endl;
-    auto shortest = g.GetShortestPathByID(0, id1);
-    for(int i = (int)shortest.GetLength() - 1; i >= 0; i--){
-        cout << shortest[i]->GetStartNode()->GetID() << " - " << shortest[i]->GetEndNode()->GetID() << " | ";
+    ArraySequence<Arc<int, int>*> shortest;
+    while(id1 > 0) {
+        shortest = g.GetShortestPathByID(0, id1);
+        for (int i = (int) shortest.GetLength() - 1; i >= 0; i--) {
+            cout << shortest[i]->GetStartNode()->GetID() << " - " << shortest[i]->GetStartNode()->GetID() << " | ";
+        }
+        if (shortest.GetLength() == 0) {
+            cout << "Node " << id1 << " is unreachable from node 0.\n";
+            id1--;
+        }
+        else{
+            break;
+        }
     }
     cout << "\n\n";
 
@@ -71,7 +81,7 @@ void RandomGraph(){
 void RandomDiGraph(){
     auto temp9 = time(nullptr);
     cout << temp9 << endl;
-//    srand (1640797783);
+//    srand (1640860509);
     srand (temp9);
     int temp = rand() % 6 + 6;
     DiGraph<int, int> g = DiGraph<int, int>();
@@ -97,9 +107,19 @@ void RandomDiGraph(){
 //    int id1 = ((int)nodes.GetLength()-1) / 2;
     int id1 = (int)nodes.GetLength()-1;
     cout << id1 << endl;
-    auto shortest = g.GetShortestPathByID(0, id1);
-    for(int i = (int)shortest.GetLength() - 1; i >= 0; i--){
-        cout << shortest[i]->GetStartDiNode()->GetID() << " - " << shortest[i]->GetEndDiNode()->GetID() << " | ";
+    ArraySequence<DiArc<int, int>*> shortest;
+    while(id1 > 0) {
+        shortest = g.GetShortestPathByID(0, id1);
+        for (int i = (int) shortest.GetLength() - 1; i >= 0; i--) {
+            cout << shortest[i]->GetStartDiNode()->GetID() << " - " << shortest[i]->GetEndDiNode()->GetID() << " | ";
+        }
+        if (shortest.GetLength() == 0) {
+            cout << "Node " << id1 << " is unreachable from node 0.\n";
+            id1--;
+        }
+        else{
+            break;
+        }
     }
     cout << "\n\n";
 

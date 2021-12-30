@@ -244,7 +244,7 @@ private:
         DiNode<T, T1>* previous = end->previous;
         DiNode<T, T1>* cur = end;
         while(previous){
-            auto DiarcsInDiNode = cur->GetOut();
+            auto DiarcsInDiNode = cur->GetIn();
             for(int i = 0; i < DiarcsInDiNode.GetLength(); i++){
                 if(DiarcsInDiNode[i]->GetStartDiNode() == previous || DiarcsInDiNode[i]->GetEndDiNode() == previous){
                     shortest.Append(DiarcsInDiNode[i]);
