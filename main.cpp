@@ -57,6 +57,7 @@ void RandomGraph(){
     cout << "\n\n";
 
     auto graphOutput = g.GetArcs();
+    cout << "graph G{\n";
     for(int i = 0; i < graphOutput.GetLength(); i++){
         cout << graphOutput[i]->GetStartNode()->GetID() << "--" << graphOutput[i]->GetEndNode()->GetID() << "[label=" << graphOutput[i]->GetData() << "]";
         if(Contains(graphOutput[i], shortest)){
@@ -64,7 +65,7 @@ void RandomGraph(){
         }
         cout << "\n";
     }
-    cout << "\n\n";
+    cout << "}\n\n";
 }
 
 void RandomDiGraph(){
@@ -103,6 +104,7 @@ void RandomDiGraph(){
     cout << "\n\n";
 
     auto graphOutput = g.GetDiArcs();
+    cout << "digraph G{\n";
     for(int i = 0; i < graphOutput.GetLength(); i++){
         cout << graphOutput[i]->GetStartDiNode()->GetID() << "->" << graphOutput[i]->GetEndDiNode()->GetID() << "[label=" << graphOutput[i]->GetData() << "]";
         if(Contains(graphOutput[i], shortest)){
@@ -110,12 +112,30 @@ void RandomDiGraph(){
         }
         cout << "\n";
     }
-    cout << "\n\n";
+    cout << "}\n\n";
 }
 
 int main() {
-    RandomDiGraph();
-
+    int msg = -1;
+    bool exit = false;
+    while(!exit){
+        cout << "Lab 3 sem 3: Graphs \nTo visualize graphs copy the output to viz.js\n1 - directed graph\n2 - undirected graph\n3 - exit\n";
+        cin >> msg;
+        switch(msg){
+            case 1:
+                RandomDiGraph();
+                break;
+            case 2:
+                RandomGraph();
+                break;
+            case 3:
+                exit = true;
+                break;
+            default:
+                cout << defaultMessage << endl;
+                break;
+        }
+    }
     return 0;
 }
 
