@@ -18,7 +18,7 @@ private:
     T *data;
 public:
     DynamicArray() {
-        data = new T[1];
+        data = new T[1]();
         this->Count = 0;
     }
 
@@ -39,7 +39,7 @@ public:
         }
     }
 
-    explicit DynamicArray(int count) : DynamicArray(NULL, count) {};
+    explicit DynamicArray(int count) : DynamicArray(nullptr, count) {};
 
     DynamicArray(DynamicArray<T> *dynamicArray) {
         this->Count = dynamicArray->Count;
@@ -49,7 +49,7 @@ public:
         }
     }
 
-    DynamicArray(DynamicArray<T> const &dynamicArray) : DynamicArray() {
+    DynamicArray(const DynamicArray<T> &dynamicArray) : DynamicArray() {
         *this = dynamicArray;
     }
 
@@ -67,7 +67,10 @@ public:
             this->Count = list.GetLength();
             if (this->Count > 0) {
                 data = new T[this->Count]();
-                memcpy(data, list.data, this->Count * sizeof(T));
+                // memcpy(data, list.data, this->Count * sizeof(T));
+                for(int i = 0; i < this->Count; i++){
+                    data[i] = list.data[i];
+                }
             } else
                 data = new T[1]();
         }
@@ -76,10 +79,7 @@ public:
 
     //Termination
     ~DynamicArray() {
-        if (data != nullptr) {
-            delete[] data;
-            data = nullptr;
-        }
+        delete[] data;
     }
 
     T &operator[](int const index) {

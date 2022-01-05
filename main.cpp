@@ -41,20 +41,20 @@ void RandomGraph(){
         }
     }
 
-    auto nodes = g.GetNodes();
+    auto nodes = g.GetNodesIDs();
     for(int i = 0; i < nodes.GetLength(); i++){
-        cout << nodes[i]->GetID() << " | ";
+        cout << nodes[i] << " | ";
     }
     cout << "\n";
 
 //    int id1 = ((int)nodes.GetLength()-1) / 2;
     int id1 = (int)nodes.GetLength()-1;
     cout << id1 << endl;
-    ArraySequence<Arc<int, int>*> shortest;
+    ArraySequence<ArraySequence<int>> shortest;
     while(id1 > 0) {
         shortest = g.GetShortestPathByID(0, id1);
         for (int i = (int) shortest.GetLength() - 1; i >= 0; i--) {
-            cout << shortest[i]->GetStartNode()->GetID() << " - " << shortest[i]->GetStartNode()->GetID() << " | ";
+            cout << shortest[i][0] << " -- " << shortest[i][1] << " | ";
         }
         if (shortest.GetLength() == 0) {
             cout << "Node " << id1 << " is unreachable from node 0.\n";
@@ -66,11 +66,12 @@ void RandomGraph(){
     }
     cout << "\n\n";
 
-    auto graphOutput = g.GetArcs();
+    auto graphOutput = g.GraphOutput();
     cout << "graph G{\n";
     for(int i = 0; i < graphOutput.GetLength(); i++){
-        cout << graphOutput[i]->GetStartNode()->GetID() << "--" << graphOutput[i]->GetEndNode()->GetID() << "[label=" << graphOutput[i]->GetData() << "]";
-        if(Contains(graphOutput[i], shortest)){
+        cout << graphOutput[i][0] << "--" << graphOutput[i][1] << "[label=" << graphOutput[i][2] << "]";
+        ArraySequence<int> temp01 = ArraySequence<int>({graphOutput[i][0], graphOutput[i][1]});
+        if(shortest.Contains(temp01)){
             cout << "[color=red]";
         }
         cout << "\n";
@@ -156,6 +157,51 @@ int main() {
                 break;
         }
     }
+
+//    Print(test_func());
+//    ArraySequence<ArraySequence<int>> arr1 = test_func();
+//    Print(arr1);
+//    arr1 = test_func();
+//    DiGraph<int, int> g = DiGraph<int, int>();
+//    for(int i = 0; i < 6; i++){
+//        int roll1 = rand() % 100;
+//        g.Append(roll1);
+//    }
+//
+//    g.BindDiNodesByID(0, 1, 1);
+//    g.BindDiNodesByID(0, 4, 10);
+//    g.BindDiNodesByID(0, 3, 20);
+//    g.BindDiNodesByID(1, 2, 1);
+//    g.BindDiNodesByID(3, 2, 1);
+//    g.BindDiNodesByID(4, 3, 5);
+//
+//    auto nodes = g.GetDiNodes();
+//    for(int i = 0; i < nodes.GetLength(); i++){
+//        cout << nodes[i]->GetID() << " | ";
+//    }
+//    cout << "\n";
+//
+////    int id1 = ((int)nodes.GetLength()-1) / 2;
+//    int id1 = (int)nodes.GetLength()-1;
+//    cout << id1 << endl;
+//    ArraySequence<DiArc<int, int>*> shortest;
+//    shortest = g.GetShortestPathByID(4, 3);
+//    for (int i = (int) shortest.GetLength() - 1; i >= 0; i--) {
+//        cout << shortest[i]->GetStartDiNode()->GetID() << " - " << shortest[i]->GetEndDiNode()->GetID() << " | ";
+//        cout << shortest[i]->GetStartDiNode()->GetDist() << " - " << shortest[i]->GetEndDiNode()->GetDist() << " |/| ";
+//    }
+//    cout << "\n\n";
+//
+//    auto graphOutput = g.GetDiArcs();
+//    cout << "digraph G{\n";
+//    for(int i = 0; i < graphOutput.GetLength(); i++){
+//        cout << graphOutput[i]->GetStartDiNode()->GetID() << "->" << graphOutput[i]->GetEndDiNode()->GetID() << "[label=" << graphOutput[i]->GetData() << "]";
+//        if(Contains(graphOutput[i], shortest)){
+//            cout << "[color=red]";
+//        }
+//        cout << "\n";
+//    }
+//    cout << "}\n\n";
     return 0;
 }
 

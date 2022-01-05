@@ -1,147 +1,123 @@
 #pragma once
 
 #include "ArraySequence.h"
-
-template <class T, typename T1>
-class Arc;
-
-template <class T, typename T1>
-class Node{
-private:
-    int id{};
-    T data;
-    ArraySequence<Arc<T, T1>*> inArcs;
-    ArraySequence<Arc<T, T1>*> outArcs;
-    T1 distance;
-public:
-    Node<T, T1> *previous;
-    Node(int id, T data) {
-        this->id = id;
-        this->data = data;
-        previous = nullptr;
-    }
-
-    Node():Node(int(), T()){}
-
-    Node(const Node&) = default;
-
-    int GetID(){
-        return id;
-    }
-    T GetData(){
-        return data;
-    }
-    T1 GetDist(){
-        return distance;
-    }
-    void SetDist(T1 dist){
-        distance = dist;
-    }
-
-    ArraySequence<Arc<T, T1>*> GetOut(){
-        return outArcs;
-    }
-    ArraySequence<Arc<T, T1>*> GetIn(){
-        return inArcs;
-    }
-    ArraySequence<Arc<T, T1>*> GetInOut(){
-        auto temp = ArraySequence<Arc<T, T1>*>(outArcs);
-        auto temp1 = ArraySequence<Arc<T, T1>*>(temp.Concat(inArcs));
-        return temp1;
-    }
-    void AddInArc(Arc<T, T1>* inArc){
-        inArcs.Append(inArc);
-    }
-    void AddOutArc(Arc<T, T1>* outArc){
-        outArcs.Append(outArc);
-    }
-    void AddInOutArc(Arc<T, T1>* arc){
-        inArcs.Append(arc);
-        outArcs.Append(arc);
-    }
-
-    bool operator==(const Node<T, T1> & node){
-        return id == node.GetID() && data == node.GetData();
-    }
-};
-
-template <class T, typename T1>
-class Arc{
-private:
-    int id{};
-    Node<T, T1>* startNode;
-    Node<T, T1>* endNode;
-    T1 data;
-public:
-    Arc(Node<T, T1>* start, Node<T, T1>* end, T1 data, int id): startNode(start), endNode(end), data(data), id(id){}
-
-    explicit Arc(T1 data, int id): startNode(), endNode(), data(data), id(id){}
-
-    Arc(): Arc(T(), 0){}
-
-    Node<T, T1>* GetStartNode() {
-        return startNode;
-    }
-    Node<T, T1>* GetEndNode(){
-        return endNode;
-    }
-    T1 GetData(){
-        return data;
-    }
-    int GetID(){
-        return id;
-    }
-
-    bool operator==(const Arc<T, T1>& arc){
-        return startNode == arc.GetStartNode() && endNode == arc.GetEndNode() && data == arc.GetData() && id == arc.GetID();
-    }
-};
-
 template<class T, typename T1>
 class Graph{
 private:
-    ArraySequence<Node<T, T1>*> nodes;
-    ArraySequence<Arc<T, T1>*> arcs;
+    class Arc;
 
-    template<class R>
-    bool Contains(R data, ArraySequence<R> array){
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array[i] == data){
-                return true;
-            }
+    class Node{
+    private:
+        int id{};
+        T data;
+        ArraySequence<Arc*> inArcs;
+        ArraySequence<Arc*> outArcs;
+        T1 distance;
+    public:
+        Node *previous;
+        Node(int id, T data) {
+            this->id = id;
+            this->data = data;
+            previous = nullptr;
         }
-        return false;
-    }
-    template<class R>
-    void Delete(R data, ArraySequence<R>& array){
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array[i] == data){
-                array.RemoveAt(i);
-                return;
-            }
-        }
-        std::runtime_error("There is no such element in this array");
-    }
 
-    void AddNode(Node<T, T1>* node){
+        Node():Node(int(), T()){}
+
+        Node(const Node&) = default;
+
+        int GetID(){
+            return id;
+        }
+        T GetData(){
+            return data;
+        }
+        T1 GetDist(){
+            return distance;
+        }
+        void SetDist(T1 dist){
+            distance = dist;
+        }
+
+        ArraySequence<Arc*> GetOut(){
+            return outArcs;
+        }
+        ArraySequence<Arc*> GetIn(){
+            return inArcs;
+        }
+        ArraySequence<Arc*> GetInOut(){
+            auto temp = ArraySequence<Arc*>(outArcs);
+            auto temp1 = ArraySequence<Arc*>(temp.Concat(inArcs));
+            return temp1;
+        }
+        void AddInArc(Arc* inArc){
+            inArcs.Append(inArc);
+        }
+        void AddOutArc(Arc* outArc){
+            outArcs.Append(outArc);
+        }
+        void AddInOutArc(Arc* arc){
+            inArcs.Append(arc);
+            outArcs.Append(arc);
+        }
+
+        bool operator==(const Node & node){
+            return id == node.GetID() && data == node.GetData();
+        }
+    };
+
+    class Arc{
+    private:
+        int id{};
+        Node* startNode;
+        Node* endNode;
+        T1 data;
+    public:
+        Arc(Node* start, Node* end, T1 data, int id): startNode(start), endNode(end), data(data), id(id){}
+
+        explicit Arc(T1 data, int id): startNode(), endNode(), data(data), id(id){}
+
+        Arc(): Arc(T(), 0){}
+
+        Node* GetStartNode() {
+            return startNode;
+        }
+        Node* GetEndNode(){
+            return endNode;
+        }
+        T1 GetData(){
+            return data;
+        }
+        int GetID(){
+            return id;
+        }
+
+        bool operator==(const Arc& arc){
+            return startNode == arc.GetStartNode() && endNode == arc.GetEndNode() && data == arc.GetData() && id == arc.GetID();
+        }
+    };
+
+    ArraySequence<Node*> nodes;
+    ArraySequence<Arc*> arcs;
+
+    void AddNode(Node* node){
         nodes.Append(node);
     }
-    void AddArc(Arc<T, T1>* arc){
+    void AddArc(Arc* arc){
         arcs.Append(arc);
     }
 
-    Arc<T, T1>* BindNodes(Node<T, T1>* node1, Node<T, T1>* node2, T1 weight){
+    Arc* BindNodes(Node* node1, Node* node2, T1 weight){
         if(ArcExists(node1, node2)){
             return nullptr;
         }
-        auto arc = new Arc<T, T1>(node1, node2, weight, GetArcsCount());
+        auto arc = new Arc(node1, node2, weight, GetArcsCount());
         node1->AddInOutArc(arc);
         node2->AddInOutArc(arc);
         AddArc(arc);
         return arc;
     }
 
-    bool ArcExists(Node<T, T1>* node1, Node<T, T1>* node2){
+    bool ArcExists(Node* node1, Node* node2){
         for(int i = 0; i < arcs.GetLength(); i++){
             if(arcs[i]->GetStartNode() == node1 && arcs[i]->GetEndNode() == node2
                || arcs[i]->GetStartNode() == node2 && arcs[i]->GetEndNode() == node1)
@@ -158,11 +134,44 @@ public:
         }
     }
 
-    ArraySequence<Node<T, T1>*> GetNodes(){
-        return nodes;
+    ArraySequence<ArraySequence<int>> GraphOutput(){
+        ArraySequence<ArraySequence<int>> res;
+        for(int i = 0; i < arcs.GetLength(); i++){
+            res.Append(ArraySequence<int>({arcs[i]->GetStartNode()->GetID(), arcs[i]->GetEndNode()->GetID(), arcs[i]->GetData()}));
+        }
+        return res;
     }
-    ArraySequence<Arc<T, T1>*> GetArcs(){
-        return arcs;
+
+    ArraySequence<int> GetNodesIDs(){
+        ArraySequence<int> res;
+        for (int i = 0; i < nodes.GetLength(); i++) {
+            res.Append(nodes[i]->GetID());
+        }
+        return res;
+    }
+
+    ArraySequence<int> GetArcsIDs(){
+        ArraySequence<int> res;
+        for (int i = 0; i < arcs.GetLength(); i++) {
+            res.Append(arcs[i]->GetID());
+        }
+        return res;
+    }
+
+    ArraySequence<T> GetNodes(){
+        ArraySequence<T> res;
+        for (int i = 0; i < nodes.GetLength(); i++) {
+            res.Append(nodes[i]->GetData());
+        }
+        return res;
+    }
+
+    ArraySequence<T1> GetArcs(){
+        ArraySequence<T1> res;
+        for (int i = 0; i < arcs.GetLength(); i++) {
+            res.Append(arcs[i]->GetData());
+        }
+        return res;
     }
 
     size_t GetNodesCount(){
@@ -173,7 +182,7 @@ public:
     }
 
     void Append(T data){
-        auto node = new Node<T, T1>(GetNodesCount(), data);
+        auto node = new Node(GetNodesCount(), data);
         AddNode(node);
     }
 
@@ -183,17 +192,17 @@ public:
         BindNodes(node1, node2, weight);
     }
 
-    ArraySequence<Arc<T, T1>*> GetShortestPathByID(int start, int end){
+    ArraySequence<ArraySequence<int>> GetShortestPathByID(int start, int end){
         auto node1 = nodes[start];
         auto node2 = nodes[end];
         return GetShortestPathDjikstra(node1, node2);
     }
 
 private:
-    ArraySequence<Arc<T, T1>*> GetShortestPathDjikstra(Node<T, T1>* start, Node<T, T1>* end){
-        ArraySequence<Node<T, T1>*> localNodes = ArraySequence<Node<T, T1>*>(nodes);
+    ArraySequence<ArraySequence<int>> GetShortestPathDjikstra(Node* start, Node* end){
+        ArraySequence<Node*> localNodes = ArraySequence<Node*>(nodes);
         // Assign the shortest path collection (set)
-        ArraySequence<Arc<T, T1>*> shortest = ArraySequence<Arc<T, T1>*>();
+        ArraySequence<ArraySequence<int>> shortest = ArraySequence<ArraySequence<int>>();
         // Assign distances of all nodes
         for(int i = 0; i < localNodes.GetLength(); i++){
             if(localNodes[i] == start){
@@ -207,7 +216,7 @@ private:
         while(localNodes.GetLength() > 0){
             // Find min and smallest
             T1 min = std::numeric_limits<T1>::max();
-            Node<T, T1>* smallest = nullptr;
+            Node* smallest = nullptr;
             for(int i = 0; i < localNodes.GetLength(); i++){
                 if(localNodes[i]->GetDist() < min){
                     min = localNodes[i]->GetDist();
@@ -216,8 +225,8 @@ private:
             }
             if(!smallest) break;
             // Get adjacent nodes
-            ArraySequence<Node<T, T1>*> adjacentNodes = ArraySequence<Node<T, T1>*>();
-            ArraySequence<Arc<T, T1>*> adjacentArcs = smallest->GetInOut();
+            ArraySequence<Node*> adjacentNodes = ArraySequence<Node*>();
+            ArraySequence<Arc*> adjacentArcs = smallest->GetInOut();
             for(int i = 0; i < adjacentArcs.GetLength(); i++){
                 if(smallest != adjacentArcs[i]->GetEndNode()) {
                     adjacentNodes.Append(adjacentArcs[i]->GetEndNode());
@@ -237,17 +246,18 @@ private:
                     adj->previous = smallest;
                 }
             }
-            Delete(smallest, localNodes);
+            localNodes.Delete(smallest);
         }
 
         // Making path
-        Node<T, T1>* previous = end->previous;
-        Node<T, T1>* cur = end;
+        Node* previous = end->previous;
+        Node* cur = end;
         while(previous){
             auto arcsInNode = cur->GetInOut();
             for(int i = 0; i < arcsInNode.GetLength(); i++){
                 if(arcsInNode[i]->GetStartNode() == previous || arcsInNode[i]->GetEndNode() == previous){
-                    shortest.Append(arcsInNode[i]);
+                    ArraySequence<int> temp1 = ArraySequence<int>({arcsInNode[i]->GetStartNode()->GetID(), arcsInNode[i]->GetEndNode()->GetID()});
+                    shortest.Append(temp1);
                     break;
                 }
             }
@@ -260,3 +270,4 @@ private:
 };
 
 // TODO: There might be zero and negative weights in Graph. FIX IT!
+// ПОЧИНИТЬ РАНДОМ: СОЗДАВАТЬ ТОЛЬКО "ИНТЕРЕСНЫЕ ГРАФЫ"

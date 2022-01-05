@@ -14,9 +14,7 @@ class ArraySequence: public Sequence<T> {
 private:
     DynamicArray<T> items;
 public:
-    ArraySequence(){
-        items = DynamicArray<T>();
-    };
+    ArraySequence() = default;
     ArraySequence(T* items, int count){
         this->items = DynamicArray<T>(items, count);
     };
@@ -41,8 +39,8 @@ public:
             this->Append(item);
     }
 
-    ArraySequence(ArraySequence<T> const &list) {
-        items = DynamicArray<T>(list.items);
+    ArraySequence(const ArraySequence<T> &list) {
+        items = list.items;
         this->Count = items.Count;
     }
 
@@ -61,9 +59,7 @@ public:
     explicit ArraySequence(const std::unique_ptr<ArraySequence<T>> &list) : ArraySequence(*list) {
     }
 
-    ~ArraySequence(){
-
-    }
+    ~ArraySequence()= default;
 
     T &Get(int index)
     {
@@ -197,10 +193,29 @@ public:
         return Concat(*list);
     }
 
-    ArraySequence<T> &operator=(const ArraySequence<T> &list) {
-        items = DynamicArray<T>(list.items);
-        this->Count = items.Count;
-        return *this;
+//    ArraySequence<T> &operator=(const ArraySequence<T> &list) {
+//        items = DynamicArray<T>(list.items);
+//        this->Count = items.Count;
+//        return *this;
+//    }
+
+    bool Contains(T data){
+        for(int i = 0; i < this->GetLength(); i++){
+            if(this->Get(i) == data){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void Delete(T data){
+        for(int i = 0; i < GetLength(); i++){
+            if(this->Get(i) == data){
+                this->RemoveAt(i);
+                return;
+            }
+        }
+        std::runtime_error("There is no such element in this array");
     }
 };
 
