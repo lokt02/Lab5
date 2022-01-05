@@ -84,14 +84,14 @@ void RandomDiGraph(){
     cout << temp9 << endl;
 //    srand (1640860509);
     srand (temp9);
-    int temp = rand() % 6 + 6;
+    int temp = rand() % 6 + 10;
     DiGraph<int, int> g = DiGraph<int, int>();
     for(int i = 0; i < temp; i++){
         int roll1 = rand() % 100;
         g.Append(roll1);
     }
 
-    int tempr = rand() % 20 + 1;
+    int tempr = rand() % 20 + 10;
     for(int i = 0; i < tempr; i++){
         int temp1 = rand() % g.GetDiNodesCount();
         if(i % g.GetDiNodesCount() != temp1 % g.GetDiNodesCount()) {
@@ -114,8 +114,8 @@ void RandomDiGraph(){
         for (int i = (int) shortest.GetLength() - 1; i >= 0; i--) {
             cout << shortest[i][0] << " - " << shortest[i][1] << " | ";
         }
-        if (shortest.GetLength() == 0) {
-            cout << "Node " << id1 << " is unreachable from node 0.\n";
+        if (shortest.GetLength() <= 4) {
+            cout << "Node " << id1 << " is unreachable from node 0 or path is too short.\n";
             id1--;
         }
         else{
