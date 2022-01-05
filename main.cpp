@@ -99,20 +99,20 @@ void RandomDiGraph(){
         }
     }
 
-    auto nodes = g.GetDiNodes();
+    auto nodes = g.GetNodesIDs();
     for(int i = 0; i < nodes.GetLength(); i++){
-        cout << nodes[i]->GetID() << " | ";
+        cout << nodes[i] << " | ";
     }
     cout << "\n";
 
 //    int id1 = ((int)nodes.GetLength()-1) / 2;
     int id1 = (int)nodes.GetLength()-1;
     cout << id1 << endl;
-    ArraySequence<DiArc<int, int>*> shortest;
+    ArraySequence<ArraySequence<int>> shortest;
     while(id1 > 0) {
         shortest = g.GetShortestPathByID(0, id1);
         for (int i = (int) shortest.GetLength() - 1; i >= 0; i--) {
-            cout << shortest[i]->GetStartDiNode()->GetID() << " - " << shortest[i]->GetEndDiNode()->GetID() << " | ";
+            cout << shortest[i][0] << " - " << shortest[i][1] << " | ";
         }
         if (shortest.GetLength() == 0) {
             cout << "Node " << id1 << " is unreachable from node 0.\n";
@@ -124,11 +124,12 @@ void RandomDiGraph(){
     }
     cout << "\n\n";
 
-    auto graphOutput = g.GetDiArcs();
+    auto graphOutput = g.GraphOutput();
     cout << "digraph G{\n";
     for(int i = 0; i < graphOutput.GetLength(); i++){
-        cout << graphOutput[i]->GetStartDiNode()->GetID() << "->" << graphOutput[i]->GetEndDiNode()->GetID() << "[label=" << graphOutput[i]->GetData() << "]";
-        if(Contains(graphOutput[i], shortest)){
+        cout << graphOutput[i][0] << "->" << graphOutput[i][1] << "[label=" << graphOutput[i][2] << "]";
+        ArraySequence<int> temp01 = ArraySequence<int>({graphOutput[i][0], graphOutput[i][1]});
+        if(shortest.Contains(temp01)){
             cout << "[color=red]";
         }
         cout << "\n";

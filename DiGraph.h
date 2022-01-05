@@ -2,115 +2,112 @@
 
 #include "ArraySequence.h"
 
-template <class T, typename T1>
-class DiArc;
-
-template <class T, typename T1>
-class DiNode{
-private:
-    int id{};
-    T data;
-    ArraySequence<DiArc<T, T1>*> inDiArcs;
-    ArraySequence<DiArc<T, T1>*> outDiArcs;
-    T1 distance;
-public:
-    DiNode<T, T1> *previous;
-    DiNode(int id, T data) {
-        this->id = id;
-        this->data = data;
-        previous = nullptr;
-    }
-
-    DiNode():DiNode(int(), T()){}
-
-    DiNode(const DiNode&) = default;
-
-    int GetID(){
-        return id;
-    }
-    T GetData(){
-        return data;
-    }
-    T1 GetDist(){
-        return distance;
-    }
-    void SetDist(T1 dist){
-        distance = dist;
-    }
-
-    ArraySequence<DiArc<T, T1>*> GetOut(){
-        return outDiArcs;
-    }
-    ArraySequence<DiArc<T, T1>*> GetIn(){
-        return inDiArcs;
-    }
-    ArraySequence<DiArc<T, T1>*> GetInOut(){
-        auto temp = ArraySequence<DiArc<T, T1>*>(outDiArcs);
-        auto temp1 = ArraySequence<DiArc<T, T1>*>(temp.Concat(inDiArcs));
-        return temp1;
-    }
-    void AddInDiArc(DiArc<T, T1>* inDiArc){
-        inDiArcs.Append(inDiArc);
-    }
-    void AddOutDiArc(DiArc<T, T1>* outDiArc){
-        outDiArcs.Append(outDiArc);
-    }
-    void AddInOutDiArc(DiArc<T, T1>* Diarc){
-        inDiArcs.Append(Diarc);
-        outDiArcs.Append(Diarc);
-    }
-
-    bool operator==(const DiNode<T, T1> & Dinode){
-        return id == Dinode.GetID() && data == Dinode.GetData();
-    }
-};
-
-template <class T, typename T1>
-class DiArc{
-private:
-    int id{};
-    DiNode<T, T1>* startDiNode;
-    DiNode<T, T1>* endDiNode;
-    T1 data;
-public:
-    DiArc(DiNode<T, T1>* start, DiNode<T, T1>* end, T1 data, int id): startDiNode(start), endDiNode(end), data(data), id(id){}
-
-    explicit DiArc(T1 data, int id): startDiNode(), endDiNode(), data(data), id(id){}
-
-    DiArc(): DiArc(T(), 0){}
-
-    DiNode<T, T1>* GetStartDiNode() {
-        return startDiNode;
-    }
-    DiNode<T, T1>* GetEndDiNode(){
-        return endDiNode;
-    }
-    T1 GetData(){
-        return data;
-    }
-    int GetID(){
-        return id;
-    }
-
-    bool operator==(const DiArc<T, T1>& Diarc){
-        return startDiNode == Diarc.GetStartDiNode() && endDiNode == Diarc.GetEndDiNode() && data == Diarc.GetData() && id == Diarc.GetID();
-    }
-};
-
 template<class T, typename T1>
 class DiGraph{
 private:
-    ArraySequence<DiNode<T, T1>*> Dinodes;
-    ArraySequence<DiArc<T, T1>*> Diarcs;
+    class DiArc;
 
-    void AddDiNode(DiNode<T, T1>* Dinode){
+    class DiNode{
+    private:
+        int id{};
+        T data;
+        ArraySequence<DiArc*> inDiArcs;
+        ArraySequence<DiArc*> outDiArcs;
+        T1 distance;
+    public:
+        DiNode *previous;
+        DiNode(int id, T data) {
+            this->id = id;
+            this->data = data;
+            previous = nullptr;
+        }
+
+        DiNode():DiNode(int(), T()){}
+
+        DiNode(const DiNode&) = default;
+
+        int GetID(){
+            return id;
+        }
+        T GetData(){
+            return data;
+        }
+        T1 GetDist(){
+            return distance;
+        }
+        void SetDist(T1 dist){
+            distance = dist;
+        }
+
+        ArraySequence<DiArc*> GetOut(){
+            return outDiArcs;
+        }
+        ArraySequence<DiArc*> GetIn(){
+            return inDiArcs;
+        }
+        ArraySequence<DiArc*> GetInOut(){
+            auto temp = ArraySequence<DiArc*>(outDiArcs);
+            auto temp1 = ArraySequence<DiArc*>(temp.Concat(inDiArcs));
+            return temp1;
+        }
+        void AddInDiArc(DiArc* inDiArc){
+            inDiArcs.Append(inDiArc);
+        }
+        void AddOutDiArc(DiArc* outDiArc){
+            outDiArcs.Append(outDiArc);
+        }
+        void AddInOutDiArc(DiArc* Diarc){
+            inDiArcs.Append(Diarc);
+            outDiArcs.Append(Diarc);
+        }
+
+        bool operator==(const DiNode & Dinode){
+            return id == Dinode.GetID() && data == Dinode.GetData();
+        }
+    };
+
+    class DiArc{
+    private:
+        int id{};
+        DiNode* startDiNode;
+        DiNode* endDiNode;
+        T1 data;
+    public:
+        DiArc(DiNode* start, DiNode* end, T1 data, int id): startDiNode(start), endDiNode(end), data(data), id(id){}
+
+        explicit DiArc(T1 data, int id): startDiNode(), endDiNode(), data(data), id(id){}
+
+        DiArc(): DiArc(T(), 0){}
+
+        DiNode* GetStartDiNode() {
+            return startDiNode;
+        }
+        DiNode* GetEndDiNode(){
+            return endDiNode;
+        }
+        T1 GetData(){
+            return data;
+        }
+        int GetID(){
+            return id;
+        }
+
+        bool operator==(const DiArc& Diarc){
+            return startDiNode == Diarc.GetStartDiNode() && endDiNode == Diarc.GetEndDiNode() && data == Diarc.GetData() && id == Diarc.GetID();
+        }
+    };
+
+    ArraySequence<DiNode*> Dinodes;
+    ArraySequence<DiArc*> Diarcs;
+
+    void AddDiNode(DiNode* Dinode){
         Dinodes.Append(Dinode);
     }
-    void AddDiArc(DiArc<T, T1>* Diarc){
+    void AddDiArc(DiArc* Diarc){
         Diarcs.Append(Diarc);
     }
 
-    bool DiArcExists(DiNode<T, T1>* Dinode1, DiNode<T, T1>* Dinode2){
+    bool DiArcExists(DiNode* Dinode1, DiNode* Dinode2){
         for(int i = 0; i < Diarcs.GetLength(); i++){
             if(Diarcs[i]->GetStartDiNode() == Dinode1 && Diarcs[i]->GetEndDiNode() == Dinode2
                || Diarcs[i]->GetStartDiNode() == Dinode2 && Diarcs[i]->GetEndDiNode() == Dinode1)
@@ -118,35 +115,15 @@ private:
         }
         return false;
     }
-    DiArc<T, T1>* BindDiNodes(DiNode<T, T1>* Dinode1, DiNode<T, T1>* Dinode2, T1 weight){
+    DiArc* BindDiNodes(DiNode* Dinode1, DiNode* Dinode2, T1 weight){
         if(DiArcExists(Dinode1, Dinode2)){
             return nullptr;
         }
-        auto Diarc = new DiArc<T, T1>(Dinode1, Dinode2, weight, GetDiArcsCount());
+        auto Diarc = new DiArc(Dinode1, Dinode2, weight, GetDiArcsCount());
         Dinode1->AddOutDiArc(Diarc);
         Dinode2->AddInDiArc(Diarc);
         AddDiArc(Diarc);
         return Diarc;
-    }
-
-    template<class R>
-    bool Contains(R data, ArraySequence<R> array){
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array[i] == data){
-                return true;
-            }
-        }
-        return false;
-    }
-    template<class R>
-    void Delete(R data, ArraySequence<R>& array){
-        for(int i = 0; i < array.GetLength(); i++){
-            if(array[i] == data){
-                array.RemoveAt(i);
-                return;
-            }
-        }
-        std::runtime_error("There is no such element in this array");
     }
 
 public:
@@ -158,11 +135,44 @@ public:
         }
     }
 
-    ArraySequence<DiNode<T, T1>*> GetDiNodes(){
-        return Dinodes;
+    ArraySequence<ArraySequence<int>> GraphOutput(){
+        ArraySequence<ArraySequence<int>> res;
+        for(int i = 0; i < Diarcs.GetLength(); i++){
+            res.Append(ArraySequence<int>({Diarcs[i]->GetStartDiNode()->GetID(), Diarcs[i]->GetEndDiNode()->GetID(), Diarcs[i]->GetData()}));
+        }
+        return res;
     }
-    ArraySequence<DiArc<T, T1>*> GetDiArcs(){
-        return Diarcs;
+
+    ArraySequence<int> GetNodesIDs(){
+        ArraySequence<int> res;
+        for (int i = 0; i < Dinodes.GetLength(); i++) {
+            res.Append(Dinodes[i]->GetID());
+        }
+        return res;
+    }
+
+    ArraySequence<int> GetArcsIDs(){
+        ArraySequence<int> res;
+        for (int i = 0; i < Diarcs.GetLength(); i++) {
+            res.Append(Diarcs[i]->GetID());
+        }
+        return res;
+    }
+
+    ArraySequence<T> GetNodes(){
+        ArraySequence<T> res;
+        for (int i = 0; i < Dinodes.GetLength(); i++) {
+            res.Append(Dinodes[i]->GetData());
+        }
+        return res;
+    }
+
+    ArraySequence<T1> GetArcs(){
+        ArraySequence<T1> res;
+        for (int i = 0; i < Diarcs.GetLength(); i++) {
+            res.Append(Diarcs[i]->GetData());
+        }
+        return res;
     }
 
     size_t GetDiNodesCount(){
@@ -173,7 +183,7 @@ public:
     }
 
     void Append(T data){
-        auto Dinode = new DiNode<T, T1>(GetDiNodesCount(), data);
+        auto Dinode = new DiNode(GetDiNodesCount(), data);
         AddDiNode(Dinode);
     }
 
@@ -183,17 +193,17 @@ public:
         BindDiNodes(Dinode1, Dinode2, weight);
     }
 
-    ArraySequence<DiArc<T, T1>*> GetShortestPathByID(int start, int end){
+    ArraySequence<ArraySequence<int>> GetShortestPathByID(int start, int end){
         auto Dinode1 = Dinodes[start];
         auto Dinode2 = Dinodes[end];
         return GetShortestPathDjikstra(Dinode1, Dinode2);
     }
 
 private:
-    ArraySequence<DiArc<T, T1>*> GetShortestPathDjikstra(DiNode<T, T1>* start, DiNode<T, T1>* end){
-        ArraySequence<DiNode<T, T1>*> localDiNodes = ArraySequence<DiNode<T, T1>*>(Dinodes);
+    ArraySequence<ArraySequence<int>> GetShortestPathDjikstra(DiNode* start, DiNode* end){
+        ArraySequence<DiNode*> localDiNodes = ArraySequence<DiNode*>(Dinodes);
         // Assign the shortest path collection (set)
-        ArraySequence<DiArc<T, T1>*> shortest = ArraySequence<DiArc<T, T1>*>();
+        ArraySequence<ArraySequence<int>> shortest = ArraySequence<ArraySequence<int>>();
         // Assign distances of all Dinodes
         for(int i = 0; i < localDiNodes.GetLength(); i++){
             if(localDiNodes[i] == start){
@@ -207,7 +217,7 @@ private:
         while(localDiNodes.GetLength() > 0){
             // Find min and smallest
             T1 min = std::numeric_limits<T1>::max();
-            DiNode<T, T1>* smallest = nullptr;
+            DiNode* smallest = nullptr;
             for(int i = 0; i < localDiNodes.GetLength(); i++){
                 if(localDiNodes[i]->GetDist() < min){
                     min = localDiNodes[i]->GetDist();
@@ -216,8 +226,8 @@ private:
             }
             if(!smallest) break;
             // Get adjacent Dinodes
-            ArraySequence<DiNode<T, T1>*> adjacentDiNodes = ArraySequence<DiNode<T, T1>*>();
-            ArraySequence<DiArc<T, T1>*> adjacentDiArcs = smallest->GetOut();
+            ArraySequence<DiNode*> adjacentDiNodes = ArraySequence<DiNode*>();
+            ArraySequence<DiArc*> adjacentDiArcs = smallest->GetOut();
             for(int i = 0; i < adjacentDiArcs.GetLength(); i++){
                 if(smallest != adjacentDiArcs[i]->GetEndDiNode()) {
                     adjacentDiNodes.Append(adjacentDiArcs[i]->GetEndDiNode());
@@ -237,17 +247,18 @@ private:
                     adj->previous = smallest;
                 }
             }
-            Delete(smallest, localDiNodes);
+            localDiNodes.Delete(smallest);
         }
 
         // Making path
-        DiNode<T, T1>* previous = end->previous;
-        DiNode<T, T1>* cur = end;
+        DiNode* previous = end->previous;
+        DiNode* cur = end;
         while(previous){
             auto DiarcsInDiNode = cur->GetIn();
             for(int i = 0; i < DiarcsInDiNode.GetLength(); i++){
                 if(DiarcsInDiNode[i]->GetStartDiNode() == previous || DiarcsInDiNode[i]->GetEndDiNode() == previous){
-                    shortest.Append(DiarcsInDiNode[i]);
+                    ArraySequence<int> temp1 = ArraySequence<int>({DiarcsInDiNode[i]->GetStartDiNode()->GetID(), DiarcsInDiNode[i]->GetEndDiNode()->GetID()});
+                    shortest.Append(temp1);
                     break;
                 }
             }
